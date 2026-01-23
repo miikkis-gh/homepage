@@ -7,7 +7,7 @@ A simple, elegant homepage with links to all your sites.
 - Clean, modern design
 - Responsive layout
 - Easy to customize
-- Ready for Vercel or Netlify deployment
+- Ready for GitHub Pages deployment
 
 ## Customization
 
@@ -20,23 +20,16 @@ Edit `index.html` to update your links:
 
 ## Deployment
 
-### Vercel
+### GitHub Pages
 
 1. Push this repository to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Click "New Project"
-4. Import your repository
-5. Deploy!
+2. Go to your repository settings
+3. Navigate to "Pages" in the left sidebar
+4. Under "Source", select the branch you want to deploy (e.g., `main` or `claude/personal-homepage-dIwWB`)
+5. Click "Save"
+6. Your site will be available at `https://yourusername.github.io/repository-name/`
 
-### Netlify
-
-1. Push this repository to GitHub
-2. Go to [netlify.com](https://netlify.com)
-3. Click "Add new site" > "Import an existing project"
-4. Connect to GitHub and select your repository
-5. Deploy!
-
-Both services offer free hosting with automatic deployments on every push.
+GitHub Pages offers free hosting with automatic deployments on every push to your selected branch.
 
 ## Local Development
 
