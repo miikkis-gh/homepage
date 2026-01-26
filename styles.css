@@ -1,106 +1,559 @@
-* {
+/* ========================================
+   Apple-inspired Glassmorphism Homepage
+   Premium dark mode design with fluid gradients
+   ======================================== */
+
+/* CSS Custom Properties */
+:root {
+    /* Colors - Premium dark palette */
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #12121a;
+
+    /* Glass effects */
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-bg-hover: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border-hover: rgba(255, 255, 255, 0.15);
+    --glass-shadow: rgba(0, 0, 0, 0.3);
+
+    /* Text colors */
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.55);
+    --text-tertiary: rgba(255, 255, 255, 0.35);
+
+    /* Gradient colors for animated background */
+    --gradient-1: #4f46e5; /* Indigo */
+    --gradient-2: #7c3aed; /* Violet */
+    --gradient-3: #0ea5e9; /* Sky */
+    --gradient-4: #06b6d4; /* Cyan */
+    --gradient-5: #c026d3; /* Fuchsia */
+
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+
+    /* Spacing */
+    --container-max-width: 420px;
+    --container-padding: 24px;
+    --button-gap: 12px;
+
+    /* Animation timings */
+    --transition-fast: 150ms;
+    --transition-normal: 250ms;
+    --transition-slow: 400ms;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Reset & Base Styles */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: var(--font-family);
+    background: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
 }
 
-.container {
-    max-width: 600px;
-    width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+/* ========================================
+   Animated Gradient Background
+   ======================================== */
+
+.gradient-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+    background: var(--bg-primary);
 }
+
+.gradient-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.5;
+    will-change: transform;
+    transition: transform 0.3s ease-out;
+}
+
+/* Blob 1 - Large indigo, top left */
+.blob-1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--gradient-1) 0%, transparent 70%);
+    top: -20%;
+    left: -10%;
+    animation: float-1 25s ease-in-out infinite;
+}
+
+/* Blob 2 - Medium violet, top right */
+.blob-2 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, var(--gradient-2) 0%, transparent 70%);
+    top: -10%;
+    right: -15%;
+    animation: float-2 30s ease-in-out infinite;
+}
+
+/* Blob 3 - Large cyan, bottom right */
+.blob-3 {
+    width: 550px;
+    height: 550px;
+    background: radial-gradient(circle, var(--gradient-3) 0%, transparent 70%);
+    bottom: -20%;
+    right: -5%;
+    animation: float-3 28s ease-in-out infinite;
+}
+
+/* Blob 4 - Medium teal, bottom left */
+.blob-4 {
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, var(--gradient-4) 0%, transparent 70%);
+    bottom: -15%;
+    left: -10%;
+    animation: float-4 22s ease-in-out infinite;
+}
+
+/* Blob 5 - Small fuchsia, center */
+.blob-5 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--gradient-5) 0%, transparent 70%);
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.35;
+    animation: float-5 20s ease-in-out infinite;
+}
+
+/* Blob animations - smooth, organic movement */
+@keyframes float-1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(50px, 30px) scale(1.05); }
+    50% { transform: translate(20px, 60px) scale(0.95); }
+    75% { transform: translate(-30px, 40px) scale(1.02); }
+}
+
+@keyframes float-2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-40px, 50px) scale(0.98); }
+    50% { transform: translate(-60px, 20px) scale(1.04); }
+    75% { transform: translate(-20px, -30px) scale(0.96); }
+}
+
+@keyframes float-3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-50px, -40px) scale(1.03); }
+    50% { transform: translate(-30px, -70px) scale(0.97); }
+    75% { transform: translate(20px, -50px) scale(1.01); }
+}
+
+@keyframes float-4 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(60px, -30px) scale(0.96); }
+    50% { transform: translate(40px, -60px) scale(1.05); }
+    75% { transform: translate(10px, -40px) scale(0.98); }
+}
+
+@keyframes float-5 {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); }
+    33% { transform: translate(-45%, -55%) scale(1.08); }
+    66% { transform: translate(-55%, -48%) scale(0.94); }
+}
+
+/* Noise overlay for texture */
+.noise-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+}
+
+/* ========================================
+   Main Container
+   ======================================== */
+
+.container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: var(--container-max-width);
+    padding: var(--container-padding);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    justify-content: center;
+}
+
+/* ========================================
+   Profile Section
+   ======================================== */
 
 .profile-section {
     text-align: center;
     margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s var(--ease-out-expo) forwards;
+    animation-delay: 0.1s;
 }
 
-.profile-section h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 10px;
-    font-weight: 700;
+.title {
+    font-size: 2.75rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.7) 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
 }
 
 .subtitle {
-    color: #666;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
 }
+
+/* ========================================
+   Links Container
+   ======================================== */
 
 .links-container {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: var(--button-gap);
+    width: 100%;
     margin-bottom: 40px;
 }
+
+/* ========================================
+   Glassmorphic Link Buttons
+   ======================================== */
 
 .link-button {
     display: flex;
     align-items: center;
-    padding: 18px 24px;
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
+    padding: 16px 20px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
     text-decoration: none;
-    color: #333;
-    font-size: 1.1rem;
-    font-weight: 600;
-    transition: all 0.3s ease;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+
+    /* Glassmorphism */
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+
+    /* Smooth transitions */
+    transition:
+        background var(--transition-normal) ease,
+        border-color var(--transition-normal) ease,
+        transform var(--transition-normal) var(--ease-out-expo),
+        box-shadow var(--transition-normal) ease;
+
+    /* Entrance animation */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s var(--ease-out-expo) forwards;
+    animation-delay: calc(0.15s + var(--delay) * 0.06s);
 }
 
+/* Inner glow effect on buttons */
+.link-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%,
+        transparent 100%
+    );
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.5;
+    transition: opacity var(--transition-normal) ease;
+}
+
+/* Hover state */
 .link-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border-color: #667eea;
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+        0 20px 40px -10px rgba(79, 70, 229, 0.15);
 }
 
+.link-button:hover::before {
+    opacity: 1;
+}
+
+/* Active state */
 .link-button:active {
-    transform: translateY(-1px);
+    transform: translateY(0) scale(0.99);
+    transition-duration: 50ms;
 }
 
-.link-button .icon {
-    font-size: 1.5rem;
-    margin-right: 16px;
+/* Focus state for accessibility */
+.link-button:focus-visible {
+    outline: none;
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.2),
+        0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
-.link-button .text {
+/* Link icon */
+.link-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-right: 14px;
+    color: var(--text-secondary);
+    transition: color var(--transition-normal) ease;
+}
+
+.link-icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+.link-button:hover .link-icon {
+    color: var(--text-primary);
+}
+
+/* Link text */
+.link-text {
     flex: 1;
+    text-align: left;
 }
 
-footer {
+/* Arrow icon */
+.link-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition:
+        opacity var(--transition-normal) ease,
+        transform var(--transition-normal) var(--ease-out-expo),
+        color var(--transition-normal) ease;
+}
+
+.link-arrow svg {
+    width: 16px;
+    height: 16px;
+}
+
+.link-button:hover .link-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--text-secondary);
+}
+
+/* ========================================
+   Footer
+   ======================================== */
+
+.footer {
     text-align: center;
-    padding-top: 20px;
-    border-top: 1px solid #e0e0e0;
-    color: #666;
-    font-size: 0.9rem;
+    color: var(--text-tertiary);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    animation: fadeInUp 0.6s var(--ease-out-expo) forwards;
+    animation-delay: 0.8s;
 }
 
-@media (max-width: 600px) {
-    .container {
-        padding: 30px 20px;
+/* ========================================
+   Animations
+   ======================================== */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loaded state - enables animations */
+body.loaded .gradient-blob {
+    animation-play-state: running;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+/* Tablet and larger */
+@media (min-width: 640px) {
+    :root {
+        --container-padding: 32px;
+        --button-gap: 14px;
     }
 
-    .profile-section h1 {
-        font-size: 2rem;
+    .title {
+        font-size: 3rem;
     }
 
     .link-button {
-        padding: 16px 20px;
-        font-size: 1rem;
+        padding: 18px 24px;
+        border-radius: 18px;
+    }
+
+    .link-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 16px;
+    }
+
+    .link-icon svg {
+        width: 22px;
+        height: 22px;
+    }
+}
+
+/* Desktop - larger blobs for bigger screens */
+@media (min-width: 1024px) {
+    .blob-1 { width: 800px; height: 800px; }
+    .blob-2 { width: 700px; height: 700px; }
+    .blob-3 { width: 750px; height: 750px; }
+    .blob-4 { width: 600px; height: 600px; }
+    .blob-5 { width: 500px; height: 500px; }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 380px) {
+    :root {
+        --container-padding: 16px;
+        --button-gap: 10px;
+    }
+
+    .title {
+        font-size: 2.25rem;
+    }
+
+    .subtitle {
+        font-size: 0.9375rem;
+    }
+
+    .link-button {
+        padding: 14px 16px;
+        font-size: 0.875rem;
+        border-radius: 14px;
+    }
+
+    .link-icon {
+        width: 22px;
+        height: 22px;
+        margin-right: 12px;
+    }
+
+    .link-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .gradient-blob {
+        animation: none;
+    }
+
+    .link-button {
+        opacity: 1;
+        transform: none;
+    }
+
+    .profile-section {
+        opacity: 1;
+        transform: none;
+    }
+
+    .footer {
+        opacity: 1;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .link-button {
+        border-width: 2px;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .link-button:hover {
+        border-color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+/* Safari-specific fixes for backdrop-filter */
+@supports not (backdrop-filter: blur(20px)) {
+    .link-button {
+        background: rgba(30, 30, 40, 0.9);
     }
 }

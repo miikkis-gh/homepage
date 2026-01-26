@@ -3,57 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Links</title>
+    <title>miikkis</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="profile-section">
-            <h1>Welcome</h1>
-            <p class="subtitle">Find all my links below</p>
-        </div>
-
-        <div class="links-container">
-            <!-- Add your links here -->
-            <a href="https://suno.com/@miikkis" class="link-button" target="_blank">
-                <span class="icon">🎵</span>
-                <span class="text">Suno</span>
-            </a>
-
-            <a href="https://soundcloud.com/real_miikkis" class="link-button" target="_blank">
-                <span class="icon">🎧</span>
-                <span class="text">Soundcloud</span>
-            </a>
-
-            <a href="https://open.spotify.com/user/real_grened" class="link-button" target="_blank">
-                <span class="icon">🎶</span>
-                <span class="text">Spotify</span>
-            </a>
-
-            <a href="https://discord.gg/QKbxGQQg" class="link-button" target="_blank">
-                <span class="icon">💬</span>
-                <span class="text">Discord</span>
-            </a>
-
-            <a href="https://twitch.tv/miikkislive" class="link-button" target="_blank">
-                <span class="icon">📺</span>
-                <span class="text">Twitch</span>
-            </a>
-
-            <a href="https://instagram.com/miikkis.ig" class="link-button" target="_blank">
-                <span class="icon">📸</span>
-                <span class="text">Instagram</span>
-            </a>
-
-            <a href="https://www.youtube.com/@pensa_wow" class="link-button" target="_blank">
-                <span class="icon">🎬</span>
-                <span class="text">Youtube</span>
-            </a>
-        </div>
-
-        <footer>
-            <p>© 2026 - Built with Claude</p>
-        </footer>
+    <!-- Animated gradient mesh background -->
+    <div class="gradient-bg">
+        <div class="gradient-blob blob-1"></div>
+        <div class="gradient-blob blob-2"></div>
+        <div class="gradient-blob blob-3"></div>
+        <div class="gradient-blob blob-4"></div>
+        <div class="gradient-blob blob-5"></div>
     </div>
+
+    <!-- Noise overlay for texture -->
+    <div class="noise-overlay"></div>
+
+    <main class="container">
+        <header class="profile-section">
+            <h1 class="title">miikkis</h1>
+            <p class="subtitle">Music & Creative</p>
+        </header>
+
+        <nav class="links-container" role="navigation" aria-label="Social links">
+            <a href="https://audiolevel.miikkis.fi" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 0">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/>
+                        <path d="M9 18V6l8 6-8 6z"/>
+                    </svg>
+                </span>
+                <span class="link-text">AudioLevel</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://suno.com/@miikkis" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 1">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="5.5" cy="17.5" r="2.5"/>
+                        <circle cx="17.5" cy="15.5" r="2.5"/>
+                        <path d="M8 17V5l12-2v12"/>
+                    </svg>
+                </span>
+                <span class="link-text">Suno</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://soundcloud.com/real_miikkis" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 2">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                    </svg>
+                </span>
+                <span class="link-text">SoundCloud</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://open.spotify.com/user/real_grened" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 3">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M8 15s1.5-2 4-2 4 2 4 2"/>
+                        <path d="M7 12s2-3 5-3 5 3 5 3"/>
+                        <path d="M6 9s2.5-4 6-4 6 4 6 4"/>
+                    </svg>
+                </span>
+                <span class="link-text">Spotify</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://discord.gg/QKbxGQQg" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 4">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 9a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v6a5 5 0 0 0 5 5h1l3 3 3-3h2a5 5 0 0 0 5-5V9z"/>
+                        <circle cx="9" cy="12" r="1"/>
+                        <circle cx="15" cy="12" r="1"/>
+                    </svg>
+                </span>
+                <span class="link-text">Discord</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://twitch.tv/miikkislive" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 5">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/>
+                    </svg>
+                </span>
+                <span class="link-text">Twitch</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://instagram.com/miikkis.ig" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 6">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <circle cx="18" cy="6" r="1"/>
+                    </svg>
+                </span>
+                <span class="link-text">Instagram</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+
+            <a href="https://www.youtube.com/@pensa_wow" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 7">
+                <span class="link-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+                        <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+                    </svg>
+                </span>
+                <span class="link-text">YouTube</span>
+                <span class="link-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+        </nav>
+
+        <footer class="footer">
+            <p>&copy; 2026 miikkis</p>
+        </footer>
+    </main>
+
+    <script>
+        // Subtle parallax effect on gradient blobs based on mouse movement
+        document.addEventListener('mousemove', (e) => {
+            const blobs = document.querySelectorAll('.gradient-blob');
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+
+            blobs.forEach((blob, index) => {
+                const factor = (index + 1) * 0.15;
+                blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+            });
+        });
+
+        // Add loaded class after a brief delay for smooth entrance
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+        });
+    </script>
 </body>
 </html>
