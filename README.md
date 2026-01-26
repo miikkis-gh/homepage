@@ -1,36 +1,43 @@
-# Personal Homepage
+# miikkis Homepage
 
-A simple, elegant homepage with links to all your sites.
+A personal link hub for miikkis featuring an Apple-inspired glassmorphism design with a premium dark mode aesthetic.
+
+## Appearance
+
+### Background
+- **Animated gradient mesh** with five colorful blobs (indigo, violet, sky, cyan, and fuchsia) that float with organic, continuous motion
+- **Mouse parallax effect** that subtly shifts the gradient blobs based on cursor position
+- **Noise texture overlay** for added depth and visual interest
+
+### Profile Section
+- Large gradient title displaying "miikkis"
+- Subtitle "Music & Creative" in muted secondary text
+- Smooth fade-in entrance animation
+
+### Link Buttons
+Eight glassmorphic social media and platform links:
+- AudioLevel
+- Suno
+- SoundCloud
+- Spotify
+- Discord
+- Twitch
+- Instagram
+- YouTube
+
+Each button features:
+- Frosted glass effect with blur and subtle borders
+- Custom SVG icon on the left
+- Hover state with lift effect, enhanced glow, and sliding arrow reveal
+- Staggered entrance animations for a cascading appearance
+
+### Footer
+Simple copyright text with fade-in animation.
 
 ## Features
 
-- Clean, modern design
-- Responsive layout
-- Easy to customize
-- Ready for GitHub Pages deployment
-
-## Customization
-
-Edit `index.html` to update your links:
-
-1. Replace the placeholder URLs with your actual links
-2. Change the icons (emojis) to match each platform
-3. Update the heading and subtitle text
-4. Add or remove buttons as needed
-
-## Deployment
-
-### GitHub Pages
-
-1. Push this repository to GitHub
-2. Go to your repository settings
-3. Navigate to "Pages" in the left sidebar
-4. Under "Source", select the branch you want to deploy (e.g., `main` or `claude/personal-homepage-dIwWB`)
-5. Click "Save"
-6. Your site will be available at `https://yourusername.github.io/repository-name/`
-
-GitHub Pages offers free hosting with automatic deployments on every push to your selected branch.
-
-## Local Development
-
-Simply open `index.html` in your browser to preview your site locally.
+- **Glassmorphism design** with backdrop blur, translucent backgrounds, and subtle borders
+- **Smooth animations** including floating blobs, entrance transitions, and interactive hover effects
+- **Responsive layout** adapting seamlessly to mobile, tablet, and desktop screens
+- **Accessibility support** with keyboard focus states, reduced motion preferences, and high contrast mode
+- **Inter typography** for a clean, modern look
