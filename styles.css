@@ -3,6 +3,15 @@
    Premium dark mode design with advanced animations
    ======================================== */
 
+/* Custom fonts */
+@font-face {
+  font-family: 'Derbyshire';
+  src: url('Derbyshire Bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Base styles */
 * {
   -webkit-font-smoothing: antialiased;
@@ -300,6 +309,7 @@ body {
 }
 
 .title {
+  font-family: 'Derbyshire', 'Inter', sans-serif;
   font-size: 2.75rem;
   font-weight: 600;
   letter-spacing: -0.03em;
