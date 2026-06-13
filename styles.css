@@ -473,13 +473,18 @@ body {
 /* Footer */
 .footer {
   text-align: center;
-  color: rgba(255, 255, 255, 0.35);
+  color: transparent;
   font-size: 0.8125rem;
   font-weight: 400;
   letter-spacing: 0.02em;
   opacity: 0;
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   animation-delay: 0.8s;
+  transition: color 0.3s ease;
+}
+
+.footer:hover {
+  color: rgba(255, 255, 255, 0.35);
 }
 
 /* Animations */
