@@ -210,7 +210,7 @@ body {
   font-family: 'Derbyshire', 'Inter', sans-serif;
   font-size: 2.75rem;
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: 0.1em;
   background: linear-gradient(135deg, #f5f5f7 0%, rgba(255, 255, 255, 0.7) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
