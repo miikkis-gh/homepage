@@ -11,7 +11,6 @@ A personal link hub for miikkis featuring an Apple-inspired glassmorphism design
 
 ### Profile Section
 - Large gradient title displaying "miikkis"
-- Subtitle "Music & Creative" in muted secondary text
 - Smooth fade-in entrance animation
 
 ### Link Buttons
