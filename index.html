@@ -24,14 +24,8 @@
     <meta name="twitter:image" content="https://miikkis.fi/preview-image.png">
 </head>
 <body>
-    <!-- Animated gradient mesh background -->
-    <div class="gradient-bg">
-        <div class="blob blob-indigo"></div>
-        <div class="blob blob-violet"></div>
-        <div class="blob blob-sky"></div>
-        <div class="blob blob-cyan"></div>
-        <div class="blob blob-fuchsia"></div>
-    </div>
+    <!-- Dot matrix background -->
+    <div class="gradient-bg"></div>
 
     <!-- Noise overlay for texture -->
     <div class="noise-overlay"></div>
@@ -160,18 +154,6 @@
     </main>
 
     <script>
-        // Subtle parallax effect on gradient blobs based on mouse movement
-        document.addEventListener('mousemove', (e) => {
-            const blobs = document.querySelectorAll('.gradient-blob');
-            const x = (e.clientX / window.innerWidth - 0.5) * 20;
-            const y = (e.clientY / window.innerHeight - 0.5) * 20;
-
-            blobs.forEach((blob, index) => {
-                const factor = (index + 1) * 0.15;
-                blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
-            });
-        });
-
         // Add loaded class after a brief delay for smooth entrance
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
