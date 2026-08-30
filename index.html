@@ -24,8 +24,10 @@
     <meta name="twitter:image" content="https://miikkis.fi/preview-image.png">
 </head>
 <body>
-    <!-- Dot matrix background -->
-    <div class="gradient-bg"></div>
+    <!-- Spotlight background -->
+    <div class="gradient-bg">
+        <div class="spotlight"></div>
+    </div>
 
     <!-- Noise overlay for texture -->
     <div class="noise-overlay"></div>
@@ -35,6 +37,9 @@
             <h1 class="title">miikkis</h1>
         </header>
 
+        <div class="content-columns">
+        <div class="links-column">
+        <h2 class="column-heading">Links</h2>
         <nav class="links-container" role="navigation" aria-label="Social links">
 
             <a href="https://suno.com/@miikkis" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 0">
@@ -70,38 +75,7 @@
                 </span>
             </a>
 
-            <a href="https://soundcloud.com/real_miikkis" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 2">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
-                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
-                    </svg>
-                </span>
-                <span class="link-text">SoundCloud</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
-
-            <a href="https://www.curseforge.com/members/miikkis_gh/projects" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 3">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                        <line x1="12" y1="22.08" x2="12" y2="12"/>
-                    </svg>
-                </span>
-                <span class="link-text">CurseForge</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
-
-            <a href="https://instagram.com/miikkis.ig" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 4">
+            <a href="https://instagram.com/miikkis.ig" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 2">
                 <span class="link-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="2" width="20" height="20" rx="5"/>
@@ -116,37 +90,18 @@
                     </svg>
                 </span>
             </a>
-
-            <a href="https://discord.gg/QKbxGQQg" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 5">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 9a5 5 0 0 0-5-5H9a5 5 0 0 0-5 5v6a5 5 0 0 0 5 5h1l3 3 3-3h2a5 5 0 0 0 5-5V9z"/>
-                        <circle cx="9" cy="12" r="1"/>
-                        <circle cx="15" cy="12" r="1"/>
-                    </svg>
-                </span>
-                <span class="link-text">Discord</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
-
-            <a href="https://twitch.tv/miikkislive" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 6">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"/>
-                    </svg>
-                </span>
-                <span class="link-text">Twitch</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
         </nav>
+        </div>
+
+        <aside class="playlists-column" aria-label="Public Spotify playlists">
+            <h2 class="column-heading">Playlists</h2>
+            <div class="playlist-embeds">
+                <iframe style="border-radius: 12px" src="https://open.spotify.com/embed/playlist/1HjNFpzIThXdkJYylLhSTI?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="2026 kesä playlist"></iframe>
+                <iframe style="border-radius: 12px" src="https://open.spotify.com/embed/playlist/1KLOaJ9M0Q3c4DBcpSx2UU?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Controversialikes playlist"></iframe>
+                <iframe style="border-radius: 12px" src="https://open.spotify.com/embed/playlist/3BIlo7oJ79Hk2ZX0oz2zgK?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="My Playlist #74likes playlist"></iframe>
+            </div>
+        </aside>
+        </div>
 
         <footer class="footer">
             <p>&copy; 2026 miikkis</p>
@@ -158,6 +113,20 @@
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
         });
+
+        // Subtle mouse-parallax for the background spotlight
+        const spotlight = document.querySelector('.spotlight');
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (spotlight && !prefersReducedMotion) {
+            const maxOffset = 40;
+            window.addEventListener('mousemove', (e) => {
+                const xRatio = e.clientX / window.innerWidth - 0.5;
+                const yRatio = e.clientY / window.innerHeight - 0.5;
+                spotlight.style.transform =
+                    `translate(${xRatio * maxOffset * 2}px, ${yRatio * maxOffset * 2}px)`;
+            });
+        }
     </script>
 </body>
 </html>
