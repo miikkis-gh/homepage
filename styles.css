@@ -276,11 +276,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.playlist-embeds iframe.playlist-featured {
-  border-color: rgba(255, 255, 255, 0.4);
-  box-shadow: 0 0 24px rgba(255, 255, 255, 0.12);
-}
-
 /* Link Button Styling */
 .link-button {
   display: flex;
