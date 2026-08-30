@@ -13,9 +13,9 @@ A personal link hub for miikkis with a minimal black-and-white design.
 - Smooth fade-in entrance animation
 
 ### Three-Column Layout
-On wider screens, about, links, and playlists sit side by side; on mobile they stack in that order.
+On wider screens, updates, links, and playlists sit side by side; on mobile they stack in that order.
 
-**About** — a short bio blurb (currently placeholder text).
+**Updates** — a self-hosted micro-feed of short posts, sourced live from a published Google Sheet (columns: `date`, `text`). Rendered as tweet-style cards, newest first, capped at 8. To post, add a row to the sheet — no code changes needed. Date values should use `YYYY-MM-DD` so sort order stays correct.
 
 **Links** — three flat, bordered link cards:
 - Suno
