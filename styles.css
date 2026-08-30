@@ -107,12 +107,28 @@ body {
   font-size: 2.75rem;
   font-weight: 600;
   letter-spacing: 0.1em;
-  background: linear-gradient(135deg, #f5f5f7 0%, rgba(255, 255, 255, 0.7) 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 1),
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 1),
+    rgba(255, 255, 255, 0.4)
+  );
+  background-size: 400% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  opacity: 0.75;
+  text-shadow:
+    0 0 30px rgba(56, 189, 248, 0.5),
+    0 0 60px rgba(129, 140, 248, 0.3);
+  animation: electric-sweep 8s linear infinite;
   margin-bottom: 8px;
+}
+
+@keyframes electric-sweep {
+  from { background-position: 0% 50%; }
+  to { background-position: -400% 50%; }
 }
 
 /* Content columns: links + playlists */
