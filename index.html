@@ -36,7 +36,17 @@
     <main class="container">
         <header class="profile-section">
             <p class="clock" id="clock"></p>
-            <p class="location" id="location"></p>
+            <p class="location" id="location" hidden>
+                <span id="location-text"></span>
+                <button type="button" class="location-info" id="location-info" aria-label="About location">
+                    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+                        <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
+                        <line x1="8" y1="7" x2="8" y2="11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                        <circle cx="8" cy="4.6" r="0.9" fill="currentColor"/>
+                    </svg>
+                    <span class="location-tooltip" role="tooltip">Live location, auto-updated</span>
+                </button>
+            </p>
         </header>
 
         <div class="content-columns">
@@ -155,9 +165,26 @@
             .then((csvText) => {
                 const rows = parseCsv(csvText);
                 const place = (rows[0] && rows[0][0] || '').trim();
-                if (place) document.getElementById('location').textContent = `📍 ${place}`;
+                if (place) {
+                    document.getElementById('location-text').textContent = `📍 ${place}`;
+                    document.getElementById('location').hidden = false;
+                }
             })
             .catch((err) => console.error('Failed to load location:', err));
+
+        // Info icon next to the location line: click/tap toggles a tooltip
+        // explaining the marker (hover also works, via CSS, for desktop pointers)
+        const locationInfo = document.getElementById('location-info');
+        if (locationInfo) {
+            locationInfo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                locationInfo.classList.toggle('open');
+            });
+            document.addEventListener('click', () => locationInfo.classList.remove('open'));
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') locationInfo.classList.remove('open');
+            });
+        }
 
         // Subtle mouse-parallax for the background spotlight
         const spotlight = document.querySelector('.spotlight');
