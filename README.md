@@ -12,15 +12,17 @@ A personal link hub for miikkis with a minimal black-and-white design.
 - "miikkis" title set in a custom Derbyshire Bold display font, dimmed to 75% opacity with a subtle gradient
 - Smooth fade-in entrance animation
 
-### Two-Column Layout
-On wider screens, links and playlists sit side by side; on mobile they stack, links first.
+### Three-Column Layout
+On wider screens, about, links, and playlists sit side by side; on mobile they stack in that order.
+
+**About** — a short bio blurb (currently placeholder text).
 
 **Links** — three flat, bordered link cards:
 - Suno
 - Spotify
 - Instagram
 
-Each card features a custom SVG icon, a sliding arrow reveal on hover, and staggered entrance animations.
+Each card features the service's official logo in its original brand color, a sliding arrow reveal on hover, and staggered entrance animations.
 
 **Playlists** — embedded Spotify players for three public playlists, so visitors can preview and play tracks without leaving the page.
 
