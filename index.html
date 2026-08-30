@@ -234,11 +234,22 @@
 
                 header.append(name, date);
 
-                const text = document.createElement('p');
-                text.className = 'tweet-text';
-                linkifyInto(text, post.text);
+                const isQuote = post.text.startsWith('>');
+                const text = document.createElement(isQuote ? 'blockquote' : 'p');
+                text.className = isQuote ? 'tweet-quote' : 'tweet-text';
+                linkifyInto(text, isQuote ? post.text.slice(1).trim() : post.text);
 
                 card.append(header, text);
+
+                if (post.image) {
+                    const image = document.createElement('img');
+                    image.className = 'tweet-image';
+                    image.src = post.image;
+                    image.alt = '';
+                    image.loading = 'lazy';
+                    card.appendChild(image);
+                }
+
                 feed.appendChild(card);
             });
         }
@@ -265,14 +276,19 @@
                 if (!rows.length) return renderUpdates([]);
 
                 const looksLikeHeader = rows[0][0] && rows[0][0].trim().toLowerCase() === 'date';
-                const header = looksLikeHeader ? rows[0] : ['date', 'text'];
+                const header = looksLikeHeader ? rows[0] : ['date', 'text', 'image'];
                 const dataRows = looksLikeHeader ? rows.slice(1) : rows;
 
                 const dateIndex = header.findIndex((h) => h.trim().toLowerCase() === 'date');
                 const textIndex = header.findIndex((h) => h.trim().toLowerCase() === 'text');
+                const imageIndex = header.findIndex((h) => h.trim().toLowerCase() === 'image');
 
                 const posts = dataRows
-                    .map((r) => ({ date: (r[dateIndex] || '').trim(), text: (r[textIndex] || '').trim() }))
+                    .map((r) => ({
+                        date: (r[dateIndex] || '').trim(),
+                        text: (r[textIndex] || '').trim(),
+                        image: (r[imageIndex] || '').trim(),
+                    }))
                     .filter((p) => p.text)
                     .sort((a, b) => parseDate(b.date) - parseDate(a.date));
 

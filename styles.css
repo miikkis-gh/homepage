@@ -188,6 +188,29 @@ body {
   color: rgba(255, 255, 255, 0.75);
   margin: 0;
   word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.tweet-quote {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.tweet-image {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 10px;
 }
 
 .tweet-link {
