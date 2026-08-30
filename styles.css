@@ -3,15 +3,6 @@
    Premium dark mode design with advanced animations
    ======================================== */
 
-/* Custom fonts */
-@font-face {
-  font-family: 'Derbyshire';
-  src: url('Derbyshire Bold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* Base styles */
 * {
   -webkit-font-smoothing: antialiased;
@@ -100,35 +91,6 @@ body {
   transform: translateY(20px);
   animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 0.1s;
-}
-
-.title {
-  font-family: 'Derbyshire', 'Inter', sans-serif;
-  font-size: 2.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.4),
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0.4),
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0.4)
-  );
-  background-size: 400% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-shadow:
-    0 0 30px rgba(56, 189, 248, 0.5),
-    0 0 60px rgba(129, 140, 248, 0.3);
-  animation: electric-sweep 8s linear infinite;
-  margin-bottom: 8px;
-}
-
-@keyframes electric-sweep {
-  from { background-position: 0% 50%; }
-  to { background-position: -400% 50%; }
 }
 
 .clock {
@@ -499,10 +461,6 @@ textarea:focus-visible {
     padding: 32px;
   }
 
-  .title {
-    font-size: 3rem;
-  }
-
   .link-button {
     padding: 18px 24px;
   }
@@ -516,6 +474,30 @@ textarea:focus-visible {
   .link-icon svg {
     width: 22px;
     height: 22px;
+  }
+}
+
+/* Desktop: columns run horizontally, ordered Links, Updates, Playlists */
+@media (min-width: 900px) {
+  .container {
+    max-width: 900px;
+  }
+
+  .content-columns {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .links-column {
+    order: 1;
+  }
+
+  .about-column {
+    order: 2;
+  }
+
+  .playlists-column {
+    order: 3;
   }
 }
 
@@ -534,10 +516,6 @@ textarea:focus-visible {
 @media (max-width: 480px) {
   .container {
     padding: 16px;
-  }
-
-  .title {
-    font-size: 2.25rem;
   }
 
   .link-button {
