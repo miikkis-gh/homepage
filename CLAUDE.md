@@ -72,6 +72,18 @@ Apps Script gotchas:
   header manually with a plain GET. Real clients (browsers, Shortcuts' "Get
   Contents of URL") already do this correctly — it only bites `curl -X POST
   -L` combos.
+- If `doPost` returns "Unauthorized" (or any expected field is `undefined`)
+  even though the secret/key names look right, log `e.postData.contents`
+  (the raw body) before assuming a value mismatch. iOS Shortcuts' "Request
+  Body: JSON" editor can silently nest all fields one level deep under an
+  empty-string key — `{"":{"secret":...,"location":...}}` — if a field was
+  added as a nested Dictionary instead of as separate top-level fields. Fix
+  in the Shortcut, not the script: delete the nested field, add `secret`/
+  `location` as two flat top-level fields in the request body.
+- The Executions dashboard's row-expand-for-logs UI is finicky (chevron
+  often not clickable). Faster to temporarily write debug values into spare
+  sheet cells (e.g. `sheet.getRange('F1').setValue(e.postData.contents)`)
+  and read them straight from the spreadsheet instead.
 
 ## Icons
 Brand-color service logos (Suno/Spotify/Instagram in `index.html`) are sourced from
@@ -86,6 +98,15 @@ Pages' CDN. After pushing, changes can take a few minutes to appear — hard-ref
 ## Security posture (verified 2026-08-30)
 - HTTPS enforced, custom domain verified with GitHub (prevents dangling-CNAME takeover
   if the repo were ever deleted), DNS uses correct apex A-records to GitHub's Pages IPs.
+- `index.html` has a CSP meta tag (`default-src 'self'`, with explicit allowances for
+  Google Fonts, the Sheets CSV fetches, the Spotify embed, and https/data images).
+  Note the CSV fetch 307-redirects to a `*.googleusercontent.com` host, so `connect-src`
+  must allow that origin too, not just `docs.google.com` — a stricter policy will
+  silently break the Updates feed and location line.
+- HSTS is sent by GitHub Pages (`max-age=31556952`) but without `includeSubDomains`/
+  `preload`, and that's not addable from this repo — GitHub Pages controls the header
+  for custom domains with no repo-level override (would need GitHub Support or moving
+  off Pages).
 - Secret scanning + push protection enabled (GitHub default for public repos); no repo
   secrets configured — deploy workflow uses OIDC, not a stored token.
 - `main` has no branch protection — low risk for a solo repo, but nothing stops a
@@ -94,4 +115,10 @@ Pages' CDN. After pushing, changes can take a few minutes to appear — hard-ref
   on the page) — don't treat its exposure in `index.html` source as a leak. Only concern
   is if that same Google Sheet *file* ever gets other private tabs added and is published
   as "entire document" instead of a single sheet.
+- `LOCATION_CSV_URL` (see Live clock & location above) is a known, accepted risk: it's a
+  fully public, unauthenticated endpoint, and once the Location tab has data, anyone with
+  that URL (visible in page source) can poll it for near-real-time whereabouts — no
+  auth/rate-limit available at the Google Sheets publish-to-web layer. Considered and
+  declined a delayed-write mitigation (publishing arrivals a couple hours late in the
+  Apps Script) — don't re-raise this unless asked.
 - Dependabot is disabled but irrelevant — no `package.json`/dependency manifest exists.
