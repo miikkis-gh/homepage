@@ -46,6 +46,33 @@ Card image box renders near-square (~320px, `object-fit: cover`), so source
 images closest to 1:1 or 4:3 crop least. The Google Photos direct-link trick
 is unofficial/undocumented — if a card image ever breaks, just re-copy the link.
 
+## Live clock & location
+`.profile-section` shows two live lines under the title:
+- **Clock** (`#clock`): ticks every second via `Intl.DateTimeFormat` with
+  `timeZone: 'Europe/Helsinki'` — always Helsinki time regardless of visitor's
+  own timezone.
+- **Location** (`#location`): fetched once per load from `LOCATION_CSV_URL` in
+  `index.html` — a separate published CSV of a "Location" sheet tab (own
+  `gid`, distinct from Updates' `gid=0`) in the same spreadsheet.
+
+The Location tab is written externally: an iPhone Shortcuts personal
+automation ("Arrive at <place>") POSTs a shared secret + place name to a
+Google Apps Script Web App (`doPost`), which writes it via `SpreadsheetApp`.
+The secret lives only in the Apps Script source and the Shortcuts action body
+— never in this repo.
+
+Apps Script gotchas:
+- After editing the script, `/exec` keeps serving the *old* code until
+  Deploy → Manage deployments → edit → Version: "New version" → Deploy. The
+  URL doesn't change, only the served code does.
+- Testing with `curl`: POSTing to `/exec` returns a `302` to a
+  `script.googleusercontent.com/macros/echo?...` URL that only accepts
+  `GET`/`HEAD`. Don't force `-X POST` (or `--post302`) across that redirect —
+  let curl's default POST→GET downgrade happen, or `curl` the location
+  header manually with a plain GET. Real clients (browsers, Shortcuts' "Get
+  Contents of URL") already do this correctly — it only bites `curl -X POST
+  -L` combos.
+
 ## Icons
 Brand-color service logos (Suno/Spotify/Instagram in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
