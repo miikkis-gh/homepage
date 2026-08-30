@@ -131,6 +131,21 @@ body {
   to { background-position: -400% 50%; }
 }
 
+.clock {
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.location {
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 4px 0 0;
+}
+
 /* Content columns: links + playlists */
 .content-columns {
   display: flex;

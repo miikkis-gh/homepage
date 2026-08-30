@@ -35,6 +35,8 @@
     <main class="container">
         <header class="profile-section">
             <h1 class="title">miikkis</h1>
+            <p class="clock" id="clock"></p>
+            <p class="location" id="location"></p>
         </header>
 
         <div class="content-columns">
@@ -120,6 +122,42 @@
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
         });
+
+        // Live Helsinki date/time clock under the title
+        const clockEl = document.getElementById('clock');
+        const clockFormatter = new Intl.DateTimeFormat('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
+
+        function updateClock() {
+            clockEl.textContent = clockFormatter.format(new Date());
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Current location, sourced from the "Location" sheet tab (written by
+        // an iPhone Shortcuts automation via Apps Script)
+        const LOCATION_CSV_URL =
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1IWRGe0nevqnYGTyzMQYwSPA-8ynwUjSrGRZfMlGs6DGyC1ywITvZpSQG8dUSOVljbXUDBS2mZfNN/pub?gid=1935106307&single=true&output=csv';
+
+        fetch(LOCATION_CSV_URL)
+            .then((res) => {
+                if (!res.ok) throw new Error(`Location fetch failed: ${res.status}`);
+                return res.text();
+            })
+            .then((csvText) => {
+                const rows = parseCsv(csvText);
+                const place = (rows[0] && rows[0][0] || '').trim();
+                if (place) document.getElementById('location').textContent = `📍 ${place}`;
+            })
+            .catch((err) => console.error('Failed to load location:', err));
 
         // Subtle mouse-parallax for the background spotlight
         const spotlight = document.querySelector('.spotlight');
