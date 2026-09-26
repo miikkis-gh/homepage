@@ -28,10 +28,16 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      # Allowlist of public files — keeps README/CLAUDE.md/etc. off the live site
+      - name: Stage site files
+        run: |
+          mkdir _site
+          cp index.html styles.css favicon.png preview-image.png CNAME _site/
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment

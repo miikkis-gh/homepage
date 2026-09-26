@@ -53,7 +53,10 @@ is unofficial/undocumented — if a card image ever breaks, just re-copy the lin
   own timezone.
 - **Location** (`#location`): fetched once per load from `LOCATION_CSV_URL` in
   `index.html` — a separate published CSV of a "Location" sheet tab (own
-  `gid`, distinct from Updates' `gid=0`) in the same spreadsheet.
+  `gid`, distinct from Updates' `gid=0`) in the same spreadsheet. Row 1 is
+  `place,date` (date as `D.M.YYYY`); the page shows `📍 place · D.M.` and hides
+  the line entirely if the date is missing or older than `LOCATION_MAX_AGE_MS`
+  (7 days).
 
 The Location tab is written externally: an iPhone Shortcuts personal
 automation ("Arrive at <place>") POSTs a shared secret + place name to a
@@ -89,6 +92,12 @@ Apps Script gotchas:
 Brand-color service logos (Suno/Spotify/Instagram in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
 accurate paths — don't hand-draw new ones if adding more services.
+
+## Deploy allowlist
+`.github/workflows/deploy.yml` copies an explicit file list into `_site/` and
+deploys only that — README, CLAUDE.md, the font, etc. are not published. **Adding
+a new public file (image, font, page) means adding it to the `cp` line there**,
+or it'll 404 on the live site while working fine locally.
 
 ## Deploy caching
 `styles.css`/`index.html` on the live site have a 10-min `Cache-Control` via GitHub
