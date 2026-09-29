@@ -94,10 +94,12 @@ the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) 
 accurate paths — don't hand-draw new ones if adding more services.
 
 ## YouTube channels
-Third column, below Playlists: a hardcoded list of compact link cards
+Third column, below Playlists, headed "Watching": a hardcoded list of compact link cards
 (`.channel-links`, reusing `.link-button` minus its per-card entrance animation,
 since the column already fades in). To add one, copy an `<a>` in `index.html`
-and change the `@handle` URL and name. The YouTube logo is from Simple Icons.
+and change the `@handle` URL and name, under the right `.channel-group` category
+label (News & politics / Investigations / Science & education). The YouTube logo
+is from Simple Icons.
 
 ## Deploy allowlist
 `.github/workflows/deploy.yml` copies an explicit file list into `_site/` and

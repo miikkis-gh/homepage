@@ -621,3 +621,16 @@ textarea:focus-visible {
   transform: none;
   animation: none;
 }
+
+/* Category labels inside the channel list */
+.channel-group {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 12px 0 0;
+}
+
+.channel-group:first-child {
+  margin-top: 0;
+}
