@@ -47,7 +47,7 @@ images closest to 1:1 or 4:3 crop least. The Google Photos direct-link trick
 is unofficial/undocumented — if a card image ever breaks, just re-copy the link.
 
 ## Live clock & location
-`.profile-section` shows two live lines under the title:
+`.profile-section` shows two live lines above the columns:
 - **Clock** (`#clock`): ticks every second via `Intl.DateTimeFormat` with
   `timeZone: 'Europe/Helsinki'` — always Helsinki time regardless of visitor's
   own timezone.
@@ -89,7 +89,7 @@ Apps Script gotchas:
   and read them straight from the spreadsheet instead.
 
 ## Icons
-Brand-color service logos (Suno/Spotify/Instagram in `index.html`) are sourced from
+Brand-color service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
 accurate paths — don't hand-draw new ones if adding more services.
 

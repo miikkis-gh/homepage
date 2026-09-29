@@ -1,6 +1,6 @@
 /* ========================================
-   Audiolevel-inspired Homepage with Glassmorphism
-   Premium dark mode design with advanced animations
+   miikkis homepage
+   Minimal flat dark design: spotlight background, bordered cards
    ======================================== */
 
 /* Base styles */
@@ -166,7 +166,7 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
-/* Content columns: links + playlists */
+/* Content columns: links, updates, playlists + YouTube */
 .content-columns {
   display: flex;
   flex-direction: column;
@@ -289,7 +289,7 @@ body {
   animation-delay: 0.5s;
 }
 
-/* Shared column heading (Links / Playlists) */
+/* Shared column heading (Links / Updates / Playlists / YouTube) */
 .column-heading {
   font-size: 0.8125rem;
   font-weight: 600;
