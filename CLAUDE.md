@@ -93,6 +93,12 @@ Brand-color service logos (Suno/Spotify/Instagram in `index.html`) are sourced f
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
 accurate paths — don't hand-draw new ones if adding more services.
 
+## YouTube channels
+Third column, below Playlists: a hardcoded list of compact link cards
+(`.channel-links`, reusing `.link-button` minus its per-card entrance animation,
+since the column already fades in). To add one, copy an `<a>` in `index.html`
+and change the `@handle` URL and name. The YouTube logo is from Simple Icons.
+
 ## Deploy allowlist
 `.github/workflows/deploy.yml` copies an explicit file list into `_site/` and
 deploys only that — README, CLAUDE.md, the font, etc. are not published. **Adding
