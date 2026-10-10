@@ -89,7 +89,7 @@ Apps Script gotchas:
   and read them straight from the spreadsheet instead.
 
 ## Electricity price card
-Under the Links buttons (`.price-section`, heading "Electricity"): a stepped line/area
+Under the Links buttons (`.price-section`, heading "Pörssisähkö"): a stepped line/area
 chart of Finnish spot prices for today + tomorrow, in c/kWh incl. VAT. Source is
 `https://api.spot-hinta.fi/TodayAndDayForward?region=FI&priceResolution=15`
 (`SPOT_PRICE_URL` in `index.html`) — free, no key, sends `Access-Control-Allow-Origin: *`.
@@ -115,7 +115,7 @@ the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) 
 accurate paths — don't hand-draw new ones if adding more services.
 
 ## YouTube channels
-Third column, below Playlists, headed "Watching": a hardcoded list of compact link cards
+Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of compact link cards
 (`.channel-links`, reusing `.link-button` minus its per-card entrance animation,
 since the column already fades in). To add one, copy an `<a>` in `index.html`
 and change the `@handle` URL and name, under the right `.channel-group` category
