@@ -88,6 +88,27 @@ Apps Script gotchas:
   sheet cells (e.g. `sheet.getRange('F1').setValue(e.postData.contents)`)
   and read them straight from the spreadsheet instead.
 
+## Electricity price card
+Under the Links buttons (`.price-section`, heading "Electricity"): a stepped line/area
+chart of Finnish spot prices for today + tomorrow, in c/kWh incl. VAT. Source is
+`https://api.spot-hinta.fi/TodayAndDayForward?region=FI&priceResolution=15`
+(`SPOT_PRICE_URL` in `index.html`) — free, no key, sends `Access-Control-Allow-Origin: *`.
+Fields used: `DateTime` (has a `+02:00`/`+03:00` offset) and `PriceWithTax` (€/kWh, ×100 for c/kWh).
+Tomorrow's prices appear once published (usually early afternoon), so the chart is
+48h or 24h wide depending on the time of day.
+- Fetched once per load; every 30 s the page only checks whether the 15-min slot
+  changed and, if so, redraws the "now" marker/headline from the cached data.
+- Chart is hand-built inline SVG (no library). Hover/touch shows a crosshair +
+  tooltip; the SVG is focusable and Left/Right arrows step through slots. A
+  "Table view" `<details>` lists every slot, so nothing depends on hover.
+- All times are formatted in `Europe/Helsinki`, like the clock.
+- Other Finnish price APIs (porssisahko.net, sahkohinta-api.fi) have no CORS headers, so
+  they can't be called from the browser; spot-hinta.fi has no history endpoint.
+- Planned, not built: a "vs. 30-day median" comparison. It needs history, so the
+  plan is a scheduled deploy-workflow step that computes the median server-side from
+  sahkohinta-api.fi (hourly, ≤60 calls/h, ENTSO-E data) into a same-origin
+  `baseline.json` — which would then have to be added to the deploy allowlist.
+
 ## Icons
 Brand-color service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
@@ -116,7 +137,7 @@ Pages' CDN. After pushing, changes can take a few minutes to appear — hard-ref
 - HTTPS enforced, custom domain verified with GitHub (prevents dangling-CNAME takeover
   if the repo were ever deleted), DNS uses correct apex A-records to GitHub's Pages IPs.
 - `index.html` has a CSP meta tag (`default-src 'self'`, with explicit allowances for
-  Google Fonts, the Sheets CSV fetches, the Spotify embed, and https/data images).
+  Google Fonts, the Sheets CSV fetches, `api.spot-hinta.fi` (price card), the Spotify embed, and https/data images).
   Note the CSV fetch 307-redirects to a `*.googleusercontent.com` host, so `connect-src`
   must allow that origin too, not just `docs.google.com` — a stricter policy will
   silently break the Updates feed and location line.

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://fonts.googleapis.com https://fonts.gstatic.com; frame-src https://open.spotify.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://api.spot-hinta.fi https://fonts.googleapis.com https://fonts.gstatic.com; frame-src https://open.spotify.com; object-src 'none'; base-uri 'self'; form-action 'self'">
     <title>miikkis</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -114,6 +114,32 @@
                 </span>
             </a>
         </nav>
+
+        <section class="price-section" aria-labelledby="price-title">
+            <h2 class="column-heading price-heading" id="price-title">Electricity</h2>
+            <div class="price-card">
+                <p class="tweet-empty" id="price-status">Loading…</p>
+                <div class="price-body" id="price-body" hidden>
+                    <div class="price-now">
+                        <span class="price-value" id="price-value"></span>
+                        <span class="price-unit">c/kWh</span>
+                        <span class="price-when" id="price-when"></span>
+                    </div>
+                    <div class="price-chart" id="price-chart"></div>
+                    <p class="price-range" id="price-range"></p>
+                    <p class="price-note">Finland spot price, incl. VAT</p>
+                    <details class="price-table-view">
+                        <summary>Table view</summary>
+                        <div class="price-table-wrap">
+                            <table id="price-table">
+                                <thead><tr><th scope="col">Time</th><th scope="col">c/kWh</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
         </div>
 
         <aside class="playlists-column" aria-label="Playlists and YouTube channels">
@@ -441,6 +467,303 @@
                 errorMsg.className = 'tweet-empty';
                 errorMsg.textContent = "Couldn't load updates.";
                 feed.appendChild(errorMsg);
+            });
+
+        // Electricity spot price card: today + tomorrow (when published) from
+        // spot-hinta.fi, 15-minute slots, c/kWh incl. VAT. Fetched once per
+        // load; the "now" marker is re-evaluated from the cached data.
+        const SPOT_PRICE_URL =
+            'https://api.spot-hinta.fi/TodayAndDayForward?region=FI&priceResolution=15';
+        const PRICE_TZ = 'Europe/Helsinki';
+        const SVG_NS = 'http://www.w3.org/2000/svg';
+        const priceState = { points: [], slotMs: 15 * 60 * 1000, nowIndex: -1 };
+
+        const priceParts = new Intl.DateTimeFormat('en-GB', {
+            timeZone: PRICE_TZ,
+            weekday: 'short',
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hourCycle: 'h23',
+        });
+
+        // Helsinki wall-clock fields for a timestamp
+        function priceMeta(t) {
+            const p = {};
+            priceParts.formatToParts(new Date(t)).forEach(({ type, value }) => { p[type] = value; });
+            return {
+                key: `${p.year}-${p.month}-${p.day}`,
+                weekday: p.weekday,
+                date: `${+p.day}.${+p.month}.`,
+                hour: +p.hour,
+                minute: +p.minute,
+                time: `${p.hour}:${p.minute}`,
+            };
+        }
+
+        function svgEl(name, attrs, parent) {
+            const el = document.createElementNS(SVG_NS, name);
+            Object.entries(attrs || {}).forEach(([k, v]) => el.setAttribute(k, v));
+            if (parent) parent.appendChild(el);
+            return el;
+        }
+
+        function formatPrice(value) {
+            return value.toFixed(2);
+        }
+
+        // Round y-axis ticks (at most ~4), always including 0
+        function priceTicks(min, max) {
+            const lo0 = Math.min(0, min);
+            const hi0 = Math.max(max, 1);
+            const raw = (hi0 - lo0) / 3;
+            const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+            const step = [1, 2, 5, 10].map((m) => m * pow).find((s) => s >= raw);
+            const ticks = [];
+            for (let v = Math.floor(lo0 / step) * step; v <= Math.ceil(hi0 / step) * step + 1e-9; v += step) {
+                ticks.push(Math.round(v * 1e6) / 1e6);
+            }
+            return ticks;
+        }
+
+        function findPriceIndex(t) {
+            const { points, slotMs } = priceState;
+            for (let i = points.length - 1; i >= 0; i--) {
+                if (points[i].t <= t) return t < points[i].t + slotMs ? i : -1;
+            }
+            return -1;
+        }
+
+        function priceDayLabel(meta, todayKey, dayKeys) {
+            if (meta.key === todayKey) return 'Today';
+            if (dayKeys[dayKeys.indexOf(meta.key) - 1] === todayKey) return 'Tomorrow';
+            return `${meta.weekday} ${meta.date}`;
+        }
+
+        function drawPrices() {
+            const { points, slotMs } = priceState;
+            const chart = document.getElementById('price-chart');
+            chart.innerHTML = '';
+
+            const W = 240;
+            const H = 150;
+            const m = { l: 22, r: 4, t: 8, b: 30 };
+            const pw = W - m.l - m.r;
+            const ph = H - m.t - m.b;
+
+            const values = points.map((p) => p.price);
+            const ticks = priceTicks(Math.min(...values), Math.max(...values));
+            const yLo = ticks[0];
+            const yHi = ticks[ticks.length - 1];
+            const t0 = points[0].t;
+            const t1 = points[points.length - 1].t + slotMs;
+            const xAt = (t) => m.l + ((t - t0) / (t1 - t0)) * pw;
+            const yAt = (v) => m.t + ph * (1 - (v - yLo) / (yHi - yLo));
+
+            const todayKey = priceMeta(Date.now()).key;
+            const dayKeys = [...new Set(points.map((p) => p.meta.key))];
+
+            const svg = svgEl('svg', {
+                viewBox: `0 0 ${W} ${H}`,
+                class: 'price-svg',
+                tabindex: '0',
+                role: 'img',
+                'aria-label': 'Electricity spot price, today and tomorrow. Use the left and right arrow keys to inspect each 15-minute slot.',
+            }, chart);
+
+            // Gridlines + y labels
+            ticks.forEach((v) => {
+                svgEl('line', { x1: m.l, x2: W - m.r, y1: yAt(v), y2: yAt(v), class: 'price-grid' }, svg);
+                const label = svgEl('text', { x: m.l - 4, y: yAt(v), class: 'price-axis-text price-axis-y' }, svg);
+                label.textContent = String(v);
+            });
+
+            // Day boundaries, 6-hourly x labels, day names
+            points.forEach((p, i) => {
+                const x = xAt(p.t);
+                const isDayStart = i === 0 || p.meta.key !== points[i - 1].meta.key;
+                if (isDayStart && i > 0) {
+                    svgEl('line', { x1: x, x2: x, y1: m.t, y2: m.t + ph, class: 'price-grid' }, svg);
+                }
+                if (isDayStart) {
+                    const day = svgEl('text', {
+                        x: x + (i > 0 ? 3 : 0),
+                        y: H - 3,
+                        class: 'price-axis-text price-axis-day',
+                    }, svg);
+                    day.textContent = priceDayLabel(p.meta, todayKey, dayKeys);
+                }
+                if (p.meta.minute === 0 && p.meta.hour % 6 === 0) {
+                    const label = svgEl('text', {
+                        x,
+                        y: H - 17,
+                        class: 'price-axis-text price-axis-x',
+                    }, svg);
+                    label.textContent = String(p.meta.hour).padStart(2, '0');
+                }
+            });
+
+            // Stepped line + faint area wash (each price holds for its slot)
+            let line = '';
+            points.forEach((p, i) => {
+                const x = xAt(p.t);
+                line += i === 0 ? `M${x},${yAt(p.price)}` : `V${yAt(p.price)}`;
+                line += `H${xAt(p.t + slotMs)}`;
+            });
+            svgEl('path', {
+                d: `${line}V${yAt(Math.max(yLo, Math.min(0, yHi)))}H${m.l}Z`,
+                class: 'price-area',
+            }, svg);
+            svgEl('path', { d: line, class: 'price-line' }, svg);
+
+            // Hover layer: crosshair + dot
+            const cross = svgEl('line', { y1: m.t, y2: m.t + ph, class: 'price-cross', visibility: 'hidden' }, svg);
+            const hoverDot = svgEl('circle', { r: 4, class: 'price-dot', visibility: 'hidden' }, svg);
+
+            // "Now" marker on the current slot
+            const nowIndex = findPriceIndex(Date.now());
+            priceState.nowIndex = nowIndex;
+            if (nowIndex >= 0) {
+                const p = points[nowIndex];
+                svgEl('circle', {
+                    cx: xAt(p.t + slotMs / 2),
+                    cy: yAt(p.price),
+                    r: 4,
+                    class: 'price-dot',
+                }, svg);
+            }
+
+            // Tooltip (values via textContent)
+            const tip = document.createElement('div');
+            tip.className = 'price-tooltip';
+            tip.hidden = true;
+            const tipValue = document.createElement('strong');
+            const tipTime = document.createElement('span');
+            tip.append(tipValue, tipTime);
+            chart.appendChild(tip);
+
+            function showSlot(i) {
+                const p = points[i];
+                const cx = xAt(p.t + slotMs / 2);
+                cross.setAttribute('x1', cx);
+                cross.setAttribute('x2', cx);
+                cross.setAttribute('visibility', 'visible');
+                hoverDot.setAttribute('cx', cx);
+                hoverDot.setAttribute('cy', yAt(p.price));
+                hoverDot.setAttribute('visibility', 'visible');
+
+                const end = priceMeta(p.t + slotMs).time;
+                tipValue.textContent = `${formatPrice(p.price)} c/kWh`;
+                tipTime.textContent =
+                    `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}–${end}`;
+                tip.hidden = false;
+                const frac = cx / W;
+                tip.style.left = `${frac * 100}%`;
+                tip.classList.toggle('flip', frac > 0.55);
+            }
+
+            function hideSlot() {
+                cross.setAttribute('visibility', 'hidden');
+                hoverDot.setAttribute('visibility', 'hidden');
+                tip.hidden = true;
+            }
+
+            let focusIndex = Math.max(nowIndex, 0);
+            svg.addEventListener('pointermove', (e) => {
+                const rect = svg.getBoundingClientRect();
+                const t = t0 + (((e.clientX - rect.left) / rect.width) * W - m.l) / pw * (t1 - t0);
+                focusIndex = Math.min(points.length - 1, Math.max(0, Math.floor((t - t0) / slotMs)));
+                showSlot(focusIndex);
+            });
+            svg.addEventListener('pointerleave', hideSlot);
+            svg.addEventListener('focus', () => showSlot(focusIndex));
+            svg.addEventListener('blur', hideSlot);
+            svg.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    focusIndex = Math.min(points.length - 1,
+                        Math.max(0, focusIndex + (e.key === 'ArrowRight' ? 1 : -1)));
+                    showSlot(focusIndex);
+                } else if (e.key === 'Escape') {
+                    hideSlot();
+                }
+            });
+
+            // Headline: current slot
+            const valueEl = document.getElementById('price-value');
+            const whenEl = document.getElementById('price-when');
+            if (nowIndex >= 0) {
+                const p = points[nowIndex];
+                valueEl.textContent = formatPrice(p.price);
+                whenEl.textContent = `Now · ${p.meta.time}–${priceMeta(p.t + slotMs).time}`;
+            } else {
+                valueEl.textContent = '–';
+                whenEl.textContent = 'No current price';
+            }
+
+            // Low / high across the whole window
+            const low = points.reduce((a, b) => (b.price < a.price ? b : a));
+            const high = points.reduce((a, b) => (b.price > a.price ? b : a));
+            const range = document.getElementById('price-range');
+            range.innerHTML = '';
+            [['Low', low], ['High', high]].forEach(([name, p]) => {
+                const item = document.createElement('span');
+                const strong = document.createElement('strong');
+                strong.textContent = formatPrice(p.price);
+                item.append(`${name} `, strong,
+                    ` · ${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`);
+                range.appendChild(item);
+            });
+        }
+
+        function buildPriceTable() {
+            const { points } = priceState;
+            const todayKey = priceMeta(Date.now()).key;
+            const dayKeys = [...new Set(points.map((p) => p.meta.key))];
+            const body = document.querySelector('#price-table tbody');
+            body.innerHTML = '';
+            points.forEach((p) => {
+                const row = document.createElement('tr');
+                const time = document.createElement('td');
+                time.textContent = `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`;
+                const value = document.createElement('td');
+                value.textContent = formatPrice(p.price);
+                row.append(time, value);
+                body.appendChild(row);
+            });
+        }
+
+        fetch(SPOT_PRICE_URL)
+            .then((res) => {
+                if (!res.ok) throw new Error(`Spot price fetch failed: ${res.status}`);
+                return res.json();
+            })
+            .then((rows) => {
+                const points = rows
+                    .map((r) => ({ t: Date.parse(r.DateTime), price: Number(r.PriceWithTax) * 100 }))
+                    .filter((p) => Number.isFinite(p.t) && Number.isFinite(p.price))
+                    .sort((a, b) => a.t - b.t);
+                if (!points.length) throw new Error('Spot price feed was empty');
+
+                points.forEach((p) => { p.meta = priceMeta(p.t); });
+                priceState.points = points;
+                if (points.length > 1) priceState.slotMs = points[1].t - points[0].t;
+
+                document.getElementById('price-status').hidden = true;
+                document.getElementById('price-body').hidden = false;
+                drawPrices();
+                buildPriceTable();
+
+                // Move the "now" marker when the 15-minute slot changes
+                setInterval(() => {
+                    if (findPriceIndex(Date.now()) !== priceState.nowIndex) drawPrices();
+                }, 30000);
+            })
+            .catch((err) => {
+                console.error('Failed to load spot prices:', err);
+                document.getElementById('price-status').textContent = "Couldn't load prices.";
             });
     </script>
 </body>

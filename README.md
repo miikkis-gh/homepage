@@ -25,6 +25,8 @@ On wider screens the columns run horizontally in the order Links, Updates, Playl
 
 Each card features the service's official logo in its original brand color, a sliding arrow reveal on hover, and staggered entrance animations.
 
+**Electricity** — below the links, a card with the current Finnish spot price (c/kWh incl. VAT) and a chart of today and tomorrow in 15-minute steps, from spot-hinta.fi. Hover, touch or use the arrow keys to read any slot; a table view lists all of them.
+
 **Playlists** — embedded Spotify players (newest playlist first), so visitors can preview and play tracks without leaving the page.
 
 **YouTube** — below the playlists, a compact list of YouTube channels miikkis watches, each linking to the channel.

@@ -634,3 +634,220 @@ textarea:focus-visible {
 .channel-group:first-child {
   margin-top: 0;
 }
+
+/* Electricity spot price card (below the link buttons) */
+.price-section {
+  margin-top: 32px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 0.4s;
+}
+
+.price-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.price-body[hidden] {
+  display: none;
+}
+
+.price-now {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.price-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #f5f5f7;
+}
+
+.price-unit,
+.price-when {
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.price-when {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-chart {
+  position: relative;
+}
+
+.price-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+
+.price-svg:focus-visible {
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.price-grid {
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 1;
+}
+
+.price-axis-text {
+  fill: rgba(255, 255, 255, 0.4);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-axis-y {
+  text-anchor: end;
+  dominant-baseline: central;
+}
+
+.price-axis-x {
+  text-anchor: middle;
+}
+
+.price-axis-day {
+  text-anchor: start;
+  fill: rgba(255, 255, 255, 0.55);
+}
+
+.price-line {
+  fill: none;
+  stroke: #3987e5;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.price-area {
+  fill: #3987e5;
+  fill-opacity: 0.1;
+  stroke: none;
+}
+
+.price-cross {
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1;
+}
+
+/* Marker with a 2px ring in the card's surface colour */
+.price-dot {
+  fill: #3987e5;
+  stroke: #121217;
+  stroke-width: 2;
+}
+
+.price-tooltip {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  pointer-events: none;
+  background: rgba(20, 20, 24, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  transform: translateX(10px);
+  z-index: 5;
+}
+
+.price-tooltip[hidden] {
+  display: none;
+}
+
+.price-tooltip.flip {
+  transform: translateX(calc(-100% - 10px));
+}
+
+.price-tooltip strong {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #f5f5f7;
+}
+
+.price-tooltip span {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.price-range {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 12px;
+  margin: 10px 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.price-range strong {
+  font-weight: 600;
+  color: #f5f5f7;
+}
+
+.price-note {
+  margin: 6px 0 0;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.price-table-view {
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.price-table-view summary {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.price-table-wrap {
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 8px;
+}
+
+.price-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.price-table-wrap th,
+.price-table-wrap td {
+  padding: 3px 0;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.price-table-wrap th:last-child,
+.price-table-wrap td:last-child {
+  text-align: right;
+}
+
+@media (forced-colors: active) {
+  .price-line,
+  .price-cross {
+    stroke: CanvasText;
+  }
+
+  .price-area,
+  .price-dot {
+    fill: CanvasText;
+  }
+}
