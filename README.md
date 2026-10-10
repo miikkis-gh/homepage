@@ -25,7 +25,7 @@ On wider screens the columns run horizontally in the order Links, Updates, Playl
 
 Each card features the service's official logo in its original brand color, a sliding arrow reveal on hover, and staggered entrance animations.
 
-**Electricity** — below the links, a card with the current Finnish spot price (c/kWh incl. VAT) and a chart of today and tomorrow in 15-minute steps, from spot-hinta.fi. Hover, touch or use the arrow keys to read any slot; a table view lists all of them. A Spot / All-in switch adds the chosen network company's transfer price and electricity tax (pick from eight companies; basic fee shown as a note).
+**Electricity** — below the links, a card with the current Finnish spot price (c/kWh incl. VAT) and a chart of today and tomorrow in 15-minute steps, from spot-hinta.fi. Hover, touch or use the arrow keys to read any slot; a table view lists all of them. The card is in Finnish. A Pörssi / Kokonaishinta (spot / all-in) switch adds the chosen network company's transfer price and electricity tax (pick from eight companies; basic fee shown as a note).
 
 **Playlists** — embedded Spotify players (newest playlist first), so visitors can preview and play tracks without leaving the page.
 

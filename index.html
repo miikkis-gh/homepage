@@ -115,10 +115,10 @@
             </a>
         </nav>
 
-        <section class="price-section" aria-labelledby="price-title">
+        <section class="price-section" aria-labelledby="price-title" lang="fi">
             <h2 class="column-heading price-heading" id="price-title">Pörssisähkö</h2>
             <div class="price-card">
-                <p class="tweet-empty" id="price-status">Loading…</p>
+                <p class="tweet-empty" id="price-status">Ladataan…</p>
                 <div class="price-body" id="price-body" hidden>
                     <div class="price-now">
                         <span class="price-value" id="price-value"></span>
@@ -127,12 +127,12 @@
                     </div>
                     <div class="price-controls">
                         <fieldset class="price-seg">
-                            <legend class="visually-hidden">Price view</legend>
-                            <label><input type="radio" name="price-mode" value="spot" checked><span>Spot</span></label>
-                            <label><input type="radio" name="price-mode" value="allin"><span>All-in</span></label>
+                            <legend class="visually-hidden">Hintanäkymä</legend>
+                            <label><input type="radio" name="price-mode" value="spot" checked><span>Pörssi</span></label>
+                            <label><input type="radio" name="price-mode" value="allin"><span>Kokonaishinta</span></label>
                         </fieldset>
                         <label class="price-company" id="price-company-wrap" hidden>
-                            <span class="visually-hidden">Network company</span>
+                            <span class="visually-hidden">Verkkoyhtiö</span>
                             <select id="price-company"></select>
                         </label>
                     </div>
@@ -141,7 +141,7 @@
                     <p class="price-note" id="price-note"></p>
                     <p class="price-note" id="price-basic" hidden></p>
                     <details class="price-table-view">
-                        <summary>Table view</summary>
+                        <summary>Taulukkonäkymä</summary>
                         <div class="price-table-wrap">
                             <table id="price-table">
                                 <thead><tr id="price-table-head"></tr></thead>
@@ -513,15 +513,15 @@
                   source: 'https://caruna.fi/en/products-and-services/home-and-real-estate/network-service-price-lists/network-service-rates-0' },
                 { id: 'elenia', name: 'Elenia', rate: 5.89, basicFee: 22.79, fuse: '3 × 25 A', from: '1.4.2026',
                   source: 'https://www.elenia.fi/files/3368404e95e6e87870c3efd831994c0a6bf8b693/elenia-pienasiakkaat-hinnasto-4-2026-www-a4-fi-v2.pdf' },
-                { id: 'helen', name: 'Helen Sähköverkko', rate: 4.72, basicFee: 6.53, fuse: 'up to 3 × 63 A', from: '1.10.2026',
+                { id: 'helen', name: 'Helen Sähköverkko', rate: 4.72, basicFee: 6.53, fuse: 'enintään 3 × 63 A', from: '1.10.2026',
                   source: 'https://www.helensahkoverkko.fi/globalassets/hinnastot-ja-sopimusehdot/hsv---enkku/price-list-for-electricity-network-services-1.10.2026.pdf' },
-                { id: 'kuopio', name: 'Kuopion Sähköverkko', rate: 3.21, basicFee: 6.78, fuse: 'up to 63 A', from: '1.7.2026',
+                { id: 'kuopio', name: 'Kuopion Sähköverkko', rate: 3.21, basicFee: 6.78, fuse: 'enintään 63 A', from: '1.7.2026',
                   source: 'https://www.kuopionenergia.fi/wp-content/uploads/2026/08/ke_sahkoverkon_verkkopalveluhinnasto_20260814.pdf' },
                 { id: 'oulu', name: 'Oulun Energia Sähköverkko', rate: 3.18, basicFee: 83.88 / 12, fuse: '3 × 25–63 A', from: '1.1.2026',
                   source: 'https://production.oulunenergia.fi/globalassets/tiedostot/sahkoverkot/oes_hinnasto_01012026.pdf' },
                 { id: 'tampere', name: 'Tampereen Energia Sähköverkko', rate: 3.26, basicFee: 6.02, fuse: '3 × 25 A', from: '1.1.2026',
                   source: 'https://www.tampereensahkoverkko.fi/wp-content/uploads/sites/3/2026/03/taes_hinnasto_2026_hvm_01042026.pdf' },
-                { id: 'turku', name: 'Turku Energia Sähköverkot', rate: 1.91, basicFee: 7.63, fuse: 'up to 3 × 25 A', from: '1.9.2024',
+                { id: 'turku', name: 'Turku Energia Sähköverkot', rate: 1.91, basicFee: 7.63, fuse: 'enintään 3 × 25 A', from: '1.9.2024',
                   source: 'https://www.turkuenergia.fi/en/electricity-networks/electricity-distribution-products-prices-and-contract-terms/network-service-charges' },
             ],
         };
@@ -562,7 +562,7 @@
             return priceBreakdown(p).total;
         }
 
-        const priceParts = new Intl.DateTimeFormat('en-GB', {
+        const priceParts = new Intl.DateTimeFormat('fi-FI', {
             timeZone: PRICE_TZ,
             weekday: 'short',
             year: 'numeric',
@@ -595,7 +595,7 @@
         }
 
         function formatPrice(value) {
-            return value.toFixed(2);
+            return value.toFixed(2).replace('.', ',');
         }
 
         // Round y-axis ticks (at most ~4), always including 0
@@ -621,8 +621,8 @@
         }
 
         function priceDayLabel(meta, todayKey, dayKeys) {
-            if (meta.key === todayKey) return 'Today';
-            if (dayKeys[dayKeys.indexOf(meta.key) - 1] === todayKey) return 'Tomorrow';
+            if (meta.key === todayKey) return 'Tänään';
+            if (dayKeys[dayKeys.indexOf(meta.key) - 1] === todayKey) return 'Huomenna';
             return `${meta.weekday} ${meta.date}`;
         }
 
@@ -654,14 +654,14 @@
                 class: 'price-svg',
                 tabindex: '0',
                 role: 'img',
-                'aria-label': 'Electricity spot price, today and tomorrow. Use the left and right arrow keys to inspect each 15-minute slot.',
+                'aria-label': 'Pörssisähkön hinta tänään ja huomenna. Tarkastele 15 minuutin jaksoja vasemmalla ja oikealla nuolinäppäimellä.',
             }, chart);
 
             // Gridlines + y labels
             ticks.forEach((v) => {
                 svgEl('line', { x1: m.l, x2: W - m.r, y1: yAt(v), y2: yAt(v), class: 'price-grid' }, svg);
                 const label = svgEl('text', { x: m.l - 4, y: yAt(v), class: 'price-axis-text price-axis-y' }, svg);
-                label.textContent = String(v);
+                label.textContent = String(v).replace('.', ',');
             });
 
             // Day boundaries, 6-hourly x labels, day names
@@ -745,7 +745,7 @@
                 tipTime.textContent =
                     `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}–${end}`;
                 tipParts.textContent = parts.transfer === undefined ? '' :
-                    `spot ${formatPrice(parts.spot)} + transfer ${formatPrice(parts.transfer)} + tax ${formatPrice(parts.tax)}`;
+                    `pörssi ${formatPrice(parts.spot)} + siirto ${formatPrice(parts.transfer)} + vero ${formatPrice(parts.tax)}`;
                 tipParts.hidden = parts.transfer === undefined;
                 tip.hidden = false;
                 // Sit right of the crosshair, flip left if it would overflow,
@@ -791,10 +791,10 @@
             if (nowIndex >= 0) {
                 const p = points[nowIndex];
                 valueEl.textContent = formatPrice(priceValue(p));
-                whenEl.textContent = `Now · ${p.meta.time}`;
+                whenEl.textContent = `Nyt · ${p.meta.time}`;
             } else {
                 valueEl.textContent = '–';
-                whenEl.textContent = 'No current price';
+                whenEl.textContent = 'Ei nykyhintaa';
             }
 
             // Low / high across the whole window
@@ -802,7 +802,7 @@
             const high = points.reduce((a, b) => (priceValue(b) > priceValue(a) ? b : a));
             const range = document.getElementById('price-range');
             range.innerHTML = '';
-            [['Low', low], ['High', high]].forEach(([name, p]) => {
+            [['Halvin', low], ['Kallein', high]].forEach(([name, p]) => {
                 const item = document.createElement('span');
                 const strong = document.createElement('strong');
                 strong.textContent = formatPrice(priceValue(p));
@@ -815,12 +815,12 @@
             const company = currentCompany();
             const allIn = priceState.mode === 'allin';
             document.getElementById('price-note').textContent = allIn ?
-                `Spot + ${company.name} transfer + electricity tax, incl. VAT` :
-                'Finland spot price, incl. VAT';
+                `Pörssi + ${company.name} siirto + sähkövero, sis. alv` :
+                'Suomen pörssisähkön hinta, sis. alv';
             const basic = document.getElementById('price-basic');
             basic.hidden = !allIn;
             if (allIn) {
-                basic.textContent = `Basic fee ${company.basicFee.toFixed(2)} €/month (${company.fuse}), not in the chart · price list from ${company.from}`;
+                basic.textContent = `Perusmaksu ${formatPrice(company.basicFee)} €/kk (${company.fuse}), ei mukana kuvaajassa · hinnasto ${company.from} alkaen`;
             }
         }
 
@@ -831,7 +831,7 @@
             const body = document.querySelector('#price-table tbody');
             const head = document.getElementById('price-table-head');
             const allIn = priceState.mode === 'allin';
-            const columns = allIn ? ['Time', 'Spot', 'Transfer', 'Tax', 'Total'] : ['Time', 'c/kWh'];
+            const columns = allIn ? ['Aika', 'Pörssi', 'Siirto', 'Vero', 'Yhteensä'] : ['Aika', 'c/kWh'];
             head.innerHTML = '';
             columns.forEach((label) => {
                 const th = document.createElement('th');
@@ -917,7 +917,7 @@
             })
             .catch((err) => {
                 console.error('Failed to load spot prices:', err);
-                document.getElementById('price-status').textContent = "Couldn't load prices.";
+                document.getElementById('price-status').textContent = 'Hintoja ei saatu ladattua.';
             });
     </script>
 </body>

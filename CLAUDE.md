@@ -104,7 +104,9 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
 - All times are formatted in `Europe/Helsinki`, like the clock.
 - Other Finnish price APIs (porssisahko.net, sahkohinta-api.fi) have no CORS headers, so
   they can't be called from the browser; spot-hinta.fi has no history endpoint.
-- **Spot / All-in switch** (default Spot; choice + company persist in `localStorage`,
+- **UI language:** all text in the card is Finnish (`lang="fi"` on `.price-section`), with
+  decimal commas and Finnish weekday names via the `fi-FI` formatter.
+- **Pörssi / Kokonaishinta (Spot / All-in) switch** (default Pörssi; choice + company persist in `localStorage`,
   wrapped in try/catch). All-in = spot + the chosen network company's general-transfer
   (yleissiirto) c/kWh + electricity tax, all incl. 25.5 % VAT. Data lives in the `GRID_FEES`
   constant in `index.html`: per company `rate` (c/kWh incl. VAT), `basicFee` (€/month,
