@@ -104,6 +104,26 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
 - All times are formatted in `Europe/Helsinki`, like the clock.
 - Other Finnish price APIs (porssisahko.net, sahkohinta-api.fi) have no CORS headers, so
   they can't be called from the browser; spot-hinta.fi has no history endpoint.
+- **Spot / All-in switch** (default Spot; choice + company persist in `localStorage`,
+  wrapped in try/catch). All-in = spot + the chosen network company's general-transfer
+  (yleissiirto) c/kWh + electricity tax, all incl. 25.5 % VAT. Data lives in the `GRID_FEES`
+  constant in `index.html`: per company `rate` (c/kWh incl. VAT), `basicFee` (€/month,
+  shown only as a note, never in the c/kWh chart), `fuse`, `from` (price list effective
+  date) and `source` (the company's own price list). Parts are rounded to 2 decimals
+  *before* summing so tooltip/table parts always add up to the total.
+- **Electricity tax** (`GRID_FEES.tax`): class 1, 2.325 c/kWh excl. VAT × 1.255 = 2.917875.
+  It already includes the security-of-supply (huoltovarmuus) fee — don't add that again.
+  Valid from 1.4.2026; update if the state changes it.
+- **Maintaining the fee list:** companies change prices once or twice a year (Helen's
+  changed 1.10.2026). Re-read each `source`, update `rate`/`basicFee`/`from`, bump
+  `checked`. Only figures from a company's own price list go in — comparison sites
+  disagreed with each other. Only the general product is covered (no night/seasonal).
+  Included: Caruna, Caruna Espoo, Elenia, Helen, Kuopio, Oulu, Tampere, Turku.
+  Vantaan Energia Sähköverkot is *not* included: its price list PDF is bot-blocked
+  (403) and its pages don't state the prices. Add it if you can read the list.
+  The Energy Authority's all-company table is behind a Cloudflare challenge too.
+  Caruna's and Turku's lists are dated 1.9.2024 on their own pages (still the
+  published ones when checked 2026-10-10).
 - Planned, not built: a "vs. 30-day median" comparison. It needs history, so the
   plan is a scheduled deploy-workflow step that computes the median server-side from
   sahkohinta-api.fi (hourly, ≤60 calls/h, ENTSO-E data) into a same-origin

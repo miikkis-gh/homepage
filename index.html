@@ -125,14 +125,26 @@
                         <span class="price-unit">c/kWh</span>
                         <span class="price-when" id="price-when"></span>
                     </div>
+                    <div class="price-controls">
+                        <fieldset class="price-seg">
+                            <legend class="visually-hidden">Price view</legend>
+                            <label><input type="radio" name="price-mode" value="spot" checked><span>Spot</span></label>
+                            <label><input type="radio" name="price-mode" value="allin"><span>All-in</span></label>
+                        </fieldset>
+                        <label class="price-company" id="price-company-wrap" hidden>
+                            <span class="visually-hidden">Network company</span>
+                            <select id="price-company"></select>
+                        </label>
+                    </div>
                     <div class="price-chart" id="price-chart"></div>
                     <p class="price-range" id="price-range"></p>
-                    <p class="price-note">Finland spot price, incl. VAT</p>
+                    <p class="price-note" id="price-note"></p>
+                    <p class="price-note" id="price-basic" hidden></p>
                     <details class="price-table-view">
                         <summary>Table view</summary>
                         <div class="price-table-wrap">
                             <table id="price-table">
-                                <thead><tr><th scope="col">Time</th><th scope="col">c/kWh</th></tr></thead>
+                                <thead><tr id="price-table-head"></tr></thead>
                                 <tbody></tbody>
                             </table>
                         </div>
@@ -476,7 +488,79 @@
             'https://api.spot-hinta.fi/TodayAndDayForward?region=FI&priceResolution=15';
         const PRICE_TZ = 'Europe/Helsinki';
         const SVG_NS = 'http://www.w3.org/2000/svg';
-        const priceState = { points: [], slotMs: 15 * 60 * 1000, nowIndex: -1 };
+        const priceState = {
+            points: [],
+            slotMs: 15 * 60 * 1000,
+            nowIndex: -1,
+            mode: 'spot', // 'spot' | 'allin'
+            companyId: 'caruna',
+        };
+
+        // "All-in" view = spot + the chosen network company's general-transfer
+        // (yleissiirto) c/kWh + electricity tax, all incl. 25.5 % VAT. The basic
+        // fee is per month, so it is shown as a note instead of in the c/kWh chart.
+        // Figures are copied from each company's own price list (see `source`);
+        // `from` is the list's effective date. Re-check them when companies announce changes.
+        const GRID_FEES = {
+            checked: '2026-10-10',
+            // Electricity tax class 1: 2.325 c/kWh excl. VAT (includes the
+            // security-of-supply fee) × 1.255 VAT, valid from 1.4.2026
+            tax: 2.917875,
+            companies: [
+                { id: 'caruna', name: 'Caruna', rate: 5.26, basicFee: 29.71, fuse: '25 A', from: '1.9.2024',
+                  source: 'https://caruna.fi/en/products-and-services/home-and-real-estate/network-service-price-lists/network-service-rates-caruna' },
+                { id: 'caruna-espoo', name: 'Caruna Espoo', rate: 2.77, basicFee: 8.18, fuse: '25–63 A', from: '1.1.2026',
+                  source: 'https://caruna.fi/en/products-and-services/home-and-real-estate/network-service-price-lists/network-service-rates-0' },
+                { id: 'elenia', name: 'Elenia', rate: 5.89, basicFee: 22.79, fuse: '3 × 25 A', from: '1.4.2026',
+                  source: 'https://www.elenia.fi/files/3368404e95e6e87870c3efd831994c0a6bf8b693/elenia-pienasiakkaat-hinnasto-4-2026-www-a4-fi-v2.pdf' },
+                { id: 'helen', name: 'Helen Sähköverkko', rate: 4.72, basicFee: 6.53, fuse: 'up to 3 × 63 A', from: '1.10.2026',
+                  source: 'https://www.helensahkoverkko.fi/globalassets/hinnastot-ja-sopimusehdot/hsv---enkku/price-list-for-electricity-network-services-1.10.2026.pdf' },
+                { id: 'kuopio', name: 'Kuopion Sähköverkko', rate: 3.21, basicFee: 6.78, fuse: 'up to 63 A', from: '1.7.2026',
+                  source: 'https://www.kuopionenergia.fi/wp-content/uploads/2026/08/ke_sahkoverkon_verkkopalveluhinnasto_20260814.pdf' },
+                { id: 'oulu', name: 'Oulun Energia Sähköverkko', rate: 3.18, basicFee: 83.88 / 12, fuse: '3 × 25–63 A', from: '1.1.2026',
+                  source: 'https://production.oulunenergia.fi/globalassets/tiedostot/sahkoverkot/oes_hinnasto_01012026.pdf' },
+                { id: 'tampere', name: 'Tampereen Energia Sähköverkko', rate: 3.26, basicFee: 6.02, fuse: '3 × 25 A', from: '1.1.2026',
+                  source: 'https://www.tampereensahkoverkko.fi/wp-content/uploads/sites/3/2026/03/taes_hinnasto_2026_hvm_01042026.pdf' },
+                { id: 'turku', name: 'Turku Energia Sähköverkot', rate: 1.91, basicFee: 7.63, fuse: 'up to 3 × 25 A', from: '1.9.2024',
+                  source: 'https://www.turkuenergia.fi/en/electricity-networks/electricity-distribution-products-prices-and-contract-terms/network-service-charges' },
+            ],
+        };
+
+        function loadPricePref(key, fallback) {
+            try {
+                return localStorage.getItem(key) || fallback;
+            } catch (err) {
+                return fallback;
+            }
+        }
+
+        function savePricePref(key, value) {
+            try {
+                localStorage.setItem(key, value);
+            } catch (err) {
+                // storage blocked: the choice just won't persist
+            }
+        }
+
+        function currentCompany() {
+            return GRID_FEES.companies.find((c) => c.id === priceState.companyId) || GRID_FEES.companies[0];
+        }
+
+        // c/kWh components for one slot in the active view. In All-in the parts
+        // are rounded to 2 decimals first, so the displayed parts always add up
+        // to the displayed total.
+        function priceBreakdown(p) {
+            if (priceState.mode !== 'allin') return { spot: p.price, total: p.price };
+            const round2 = (v) => Math.round(v * 100) / 100;
+            const spot = round2(p.price);
+            const transfer = round2(currentCompany().rate);
+            const tax = round2(GRID_FEES.tax);
+            return { spot, transfer, tax, total: round2(spot + transfer + tax) };
+        }
+
+        function priceValue(p) {
+            return priceBreakdown(p).total;
+        }
 
         const priceParts = new Intl.DateTimeFormat('en-GB', {
             timeZone: PRICE_TZ,
@@ -553,7 +637,7 @@
             const pw = W - m.l - m.r;
             const ph = H - m.t - m.b;
 
-            const values = points.map((p) => p.price);
+            const values = points.map(priceValue);
             const ticks = priceTicks(Math.min(...values), Math.max(...values));
             const yLo = ticks[0];
             const yHi = ticks[ticks.length - 1];
@@ -609,7 +693,7 @@
             let line = '';
             points.forEach((p, i) => {
                 const x = xAt(p.t);
-                line += i === 0 ? `M${x},${yAt(p.price)}` : `V${yAt(p.price)}`;
+                line += i === 0 ? `M${x},${yAt(priceValue(p))}` : `V${yAt(priceValue(p))}`;
                 line += `H${xAt(p.t + slotMs)}`;
             });
             svgEl('path', {
@@ -629,7 +713,7 @@
                 const p = points[nowIndex];
                 svgEl('circle', {
                     cx: xAt(p.t + slotMs / 2),
-                    cy: yAt(p.price),
+                    cy: yAt(priceValue(p)),
                     r: 4,
                     class: 'price-dot',
                 }, svg);
@@ -641,7 +725,8 @@
             tip.hidden = true;
             const tipValue = document.createElement('strong');
             const tipTime = document.createElement('span');
-            tip.append(tipValue, tipTime);
+            const tipParts = document.createElement('span');
+            tip.append(tipValue, tipTime, tipParts);
             chart.appendChild(tip);
 
             function showSlot(i) {
@@ -651,17 +736,26 @@
                 cross.setAttribute('x2', cx);
                 cross.setAttribute('visibility', 'visible');
                 hoverDot.setAttribute('cx', cx);
-                hoverDot.setAttribute('cy', yAt(p.price));
+                hoverDot.setAttribute('cy', yAt(priceValue(p)));
                 hoverDot.setAttribute('visibility', 'visible');
 
                 const end = priceMeta(p.t + slotMs).time;
-                tipValue.textContent = `${formatPrice(p.price)} c/kWh`;
+                const parts = priceBreakdown(p);
+                tipValue.textContent = `${formatPrice(parts.total)} c/kWh`;
                 tipTime.textContent =
                     `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}–${end}`;
+                tipParts.textContent = parts.transfer === undefined ? '' :
+                    `spot ${formatPrice(parts.spot)} + transfer ${formatPrice(parts.transfer)} + tax ${formatPrice(parts.tax)}`;
+                tipParts.hidden = parts.transfer === undefined;
                 tip.hidden = false;
-                const frac = cx / W;
-                tip.style.left = `${frac * 100}%`;
-                tip.classList.toggle('flip', frac > 0.55);
+                // Sit right of the crosshair, flip left if it would overflow,
+                // and never leave the chart's own width
+                const chartWidth = chart.clientWidth;
+                const px = (cx / W) * chartWidth;
+                const tipWidth = tip.offsetWidth;
+                let left = px + 10;
+                if (left + tipWidth > chartWidth) left = px - 10 - tipWidth;
+                tip.style.left = `${Math.max(0, Math.min(left, chartWidth - tipWidth))}px`;
             }
 
             function hideSlot() {
@@ -696,26 +790,38 @@
             const whenEl = document.getElementById('price-when');
             if (nowIndex >= 0) {
                 const p = points[nowIndex];
-                valueEl.textContent = formatPrice(p.price);
-                whenEl.textContent = `Now · ${p.meta.time}–${priceMeta(p.t + slotMs).time}`;
+                valueEl.textContent = formatPrice(priceValue(p));
+                whenEl.textContent = `Now · ${p.meta.time}`;
             } else {
                 valueEl.textContent = '–';
                 whenEl.textContent = 'No current price';
             }
 
             // Low / high across the whole window
-            const low = points.reduce((a, b) => (b.price < a.price ? b : a));
-            const high = points.reduce((a, b) => (b.price > a.price ? b : a));
+            const low = points.reduce((a, b) => (priceValue(b) < priceValue(a) ? b : a));
+            const high = points.reduce((a, b) => (priceValue(b) > priceValue(a) ? b : a));
             const range = document.getElementById('price-range');
             range.innerHTML = '';
             [['Low', low], ['High', high]].forEach(([name, p]) => {
                 const item = document.createElement('span');
                 const strong = document.createElement('strong');
-                strong.textContent = formatPrice(p.price);
+                strong.textContent = formatPrice(priceValue(p));
                 item.append(`${name} `, strong,
                     ` · ${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`);
                 range.appendChild(item);
             });
+
+            // Notes under the chart
+            const company = currentCompany();
+            const allIn = priceState.mode === 'allin';
+            document.getElementById('price-note').textContent = allIn ?
+                `Spot + ${company.name} transfer + electricity tax, incl. VAT` :
+                'Finland spot price, incl. VAT';
+            const basic = document.getElementById('price-basic');
+            basic.hidden = !allIn;
+            if (allIn) {
+                basic.textContent = `Basic fee ${company.basicFee.toFixed(2)} €/month (${company.fuse}), not in the chart · price list from ${company.from}`;
+            }
         }
 
         function buildPriceTable() {
@@ -723,14 +829,28 @@
             const todayKey = priceMeta(Date.now()).key;
             const dayKeys = [...new Set(points.map((p) => p.meta.key))];
             const body = document.querySelector('#price-table tbody');
+            const head = document.getElementById('price-table-head');
+            const allIn = priceState.mode === 'allin';
+            const columns = allIn ? ['Time', 'Spot', 'Transfer', 'Tax', 'Total'] : ['Time', 'c/kWh'];
+            head.innerHTML = '';
+            columns.forEach((label) => {
+                const th = document.createElement('th');
+                th.scope = 'col';
+                th.textContent = label;
+                head.appendChild(th);
+            });
             body.innerHTML = '';
             points.forEach((p) => {
+                const parts = priceBreakdown(p);
                 const row = document.createElement('tr');
                 const time = document.createElement('td');
                 time.textContent = `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`;
-                const value = document.createElement('td');
-                value.textContent = formatPrice(p.price);
-                row.append(time, value);
+                row.appendChild(time);
+                (allIn ? [parts.spot, parts.transfer, parts.tax, parts.total] : [parts.total]).forEach((v) => {
+                    const cell = document.createElement('td');
+                    cell.textContent = formatPrice(v);
+                    row.appendChild(cell);
+                });
                 body.appendChild(row);
             });
         }
@@ -751,10 +871,44 @@
                 priceState.points = points;
                 if (points.length > 1) priceState.slotMs = points[1].t - points[0].t;
 
+                // Restore the viewer's last choices (default: Spot, first company)
+                const savedMode = loadPricePref('priceMode', 'spot');
+                priceState.mode = savedMode === 'allin' ? 'allin' : 'spot';
+                const savedCompany = loadPricePref('priceCompany', priceState.companyId);
+                if (GRID_FEES.companies.some((c) => c.id === savedCompany)) priceState.companyId = savedCompany;
+
+                const select = document.getElementById('price-company');
+                GRID_FEES.companies.forEach((c) => {
+                    const option = document.createElement('option');
+                    option.value = c.id;
+                    option.textContent = c.name;
+                    select.appendChild(option);
+                });
+                select.value = priceState.companyId;
+
+                function renderPriceCard() {
+                    document.getElementById('price-company-wrap').hidden = priceState.mode !== 'allin';
+                    drawPrices();
+                    buildPriceTable();
+                }
+
+                document.querySelectorAll('input[name="price-mode"]').forEach((radio) => {
+                    radio.checked = radio.value === priceState.mode;
+                    radio.addEventListener('change', () => {
+                        priceState.mode = radio.value;
+                        savePricePref('priceMode', radio.value);
+                        renderPriceCard();
+                    });
+                });
+                select.addEventListener('change', () => {
+                    priceState.companyId = select.value;
+                    savePricePref('priceCompany', select.value);
+                    renderPriceCard();
+                });
+
                 document.getElementById('price-status').hidden = true;
                 document.getElementById('price-body').hidden = false;
-                drawPrices();
-                buildPriceTable();
+                renderPriceCard();
 
                 // Move the "now" marker when the 15-minute slot changes
                 setInterval(() => {
