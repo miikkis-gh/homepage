@@ -382,6 +382,56 @@
             }
         }
 
+        // Returns {id, url} for YouTube watch/share/shorts/embed links, else null.
+        // Only a validated 11-character id and a youtube.com / youtu.be host are used.
+        function parseYouTube(value) {
+            try {
+                const u = new URL(value);
+                if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+                const host = u.hostname.replace(/^(www|m|music)\./, '');
+                let id = null;
+                if (host === 'youtu.be') {
+                    id = u.pathname.slice(1).split('/')[0];
+                } else if (host === 'youtube.com') {
+                    if (u.pathname === '/watch') {
+                        id = u.searchParams.get('v');
+                    } else {
+                        const m = u.pathname.match(/^\/(?:shorts|embed|live)\/([^/?]+)/);
+                        id = m && m[1];
+                    }
+                }
+                return /^[\w-]{11}$/.test(id || '') ? { id, url: u.href } : null;
+            } catch (err) {
+                return null;
+            }
+        }
+
+        // Thumbnail that opens the video on YouTube (no embedded player, so
+        // nothing is sent to YouTube until the visitor clicks, apart from the
+        // thumbnail request itself)
+        function createVideoCard({ id, url }) {
+            const link = document.createElement('a');
+            link.className = 'tweet-video';
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.setAttribute('aria-label', 'Katso video YouTubessa');
+
+            const thumb = document.createElement('img');
+            thumb.src = `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+            thumb.alt = '';
+            thumb.loading = 'lazy';
+            thumb.addEventListener('error', () => thumb.remove());
+
+            const play = document.createElement('span');
+            play.className = 'tweet-video-play';
+            play.setAttribute('aria-hidden', 'true');
+            play.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+
+            link.append(thumb, play);
+            return link;
+        }
+
         function renderUpdates(posts) {
             const feed = document.getElementById('tweet-feed');
             feed.innerHTML = '';
@@ -411,20 +461,30 @@
 
                 header.append(name, date);
 
-                const isQuote = post.text.startsWith('>');
-                const text = document.createElement(isQuote ? 'blockquote' : 'p');
-                text.className = isQuote ? 'tweet-quote' : 'tweet-text';
-                linkifyInto(text, isQuote ? post.text.slice(1).trim() : post.text);
+                card.appendChild(header);
 
-                card.append(header, text);
+                if (post.text) {
+                    const isQuote = post.text.startsWith('>');
+                    const text = document.createElement(isQuote ? 'blockquote' : 'p');
+                    text.className = isQuote ? 'tweet-quote' : 'tweet-text';
+                    linkifyInto(text, isQuote ? post.text.slice(1).trim() : post.text);
+                    card.appendChild(text);
+                }
 
                 if (post.image) {
-                    const image = document.createElement('img');
-                    image.className = 'tweet-image';
-                    image.src = post.image;
-                    image.alt = '';
-                    image.loading = 'lazy';
-                    card.appendChild(image);
+                    const video = parseYouTube(post.image);
+                    if (video) {
+                        card.appendChild(createVideoCard(video));
+                    } else {
+                        const image = document.createElement('img');
+                        image.className = 'tweet-image';
+                        image.src = post.image;
+                        image.alt = '';
+                        image.loading = 'lazy';
+                        // A cell that isn't a direct image URL would show a broken-image box
+                        image.addEventListener('error', () => image.remove());
+                        card.appendChild(image);
+                    }
                 }
 
                 feed.appendChild(card);
@@ -466,7 +526,7 @@
                         text: (r[textIndex] || '').trim(),
                         image: (r[imageIndex] || '').trim(),
                     }))
-                    .filter((p) => p.text)
+                    .filter((p) => p.text || p.image)
                     .sort((a, b) => parseDate(b.date) - parseDate(a.date));
 
                 renderUpdates(posts);

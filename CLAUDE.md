@@ -28,6 +28,14 @@ reformatted as `https://drive.google.com/uc?export=view&id=<FILE_ID>`) — a nor
 Drive "share" link won't render as an `<img>` src. Rendered below the post text,
 capped at 320px height, cropped via `object-fit: cover`.
 
+The `image` cell can also hold a **YouTube link** (`youtube.com/watch?v=`, `youtu.be/`,
+`/shorts/`, `/embed/`, `/live/`): it renders as a 16:9 video card — the thumbnail
+(`i.ytimg.com/vi/<id>/hqdefault.jpg`, black bars cropped) with a play button, opening
+the video on YouTube in a new tab. No embedded player, so nothing but the thumbnail
+request goes to YouTube before a click. A post may have an `image` and no `text` (the
+card then shows just the header and media). Any other `image` value that fails to load
+(e.g. a normal page URL) is removed instead of leaving a broken-image box.
+
 ## Post images
 `post_image/` is a local, gitignored staging folder for photos going into the
 Updates feed's `image` column — never committed, never deployed. Workflow:

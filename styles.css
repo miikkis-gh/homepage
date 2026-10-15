@@ -248,6 +248,54 @@ body {
   margin-top: 10px;
 }
 
+/* YouTube link in the image column: thumbnail that opens the video */
+.tweet-video {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  margin-top: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+}
+
+/* hqdefault is 4:3 with black bars on 16:9 videos; cover crops them away */
+.tweet-video img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease;
+}
+
+.tweet-video:hover img {
+  opacity: 0.85;
+}
+
+.tweet-video-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  color: #f5f5f7;
+  background: rgba(10, 10, 15, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.tweet-video-play svg {
+  width: 22px;
+  height: 22px;
+  margin-left: 2px;
+}
+
 .tweet-link {
   color: #f5f5f7;
   text-decoration: underline;
