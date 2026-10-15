@@ -234,6 +234,16 @@
         </footer>
     </main>
 
+    <!-- Image lightbox for Updates photos (native <dialog>: focus trap, Esc, backdrop) -->
+    <dialog class="lightbox" id="lightbox" aria-label="Suurennettu kuva">
+        <img class="lightbox-image" id="lightbox-image" alt="">
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Sulje">
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </dialog>
+
     <script>
         // Add loaded class after a brief delay for smooth entrance
         window.addEventListener('load', () => {
@@ -382,6 +392,50 @@
             }
         }
 
+        // Lightbox: clicking an Updates photo shows it large. One shared <dialog>.
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightbox-image');
+        let lightboxToken = 0;
+
+        // Google Photos links often carry a small size (or none, which returns a
+        // ~512px copy), so ask for a larger width; other hosts are used as-is.
+        function largeImageUrl(src) {
+            try {
+                const u = new URL(src);
+                if (!u.hostname.endsWith('.googleusercontent.com') || !u.pathname.startsWith('/pw/')) return src;
+                const sizeStart = u.pathname.indexOf('=');
+                const path = sizeStart === -1 ? u.pathname : u.pathname.slice(0, sizeStart);
+                return `${u.origin}${path}=w1600`;
+            } catch (err) {
+                return src;
+            }
+        }
+
+        function openLightbox(src) {
+            const token = ++lightboxToken;
+            lightboxImage.src = src; // already loaded in the card, so it shows instantly
+            const large = largeImageUrl(src);
+            if (large !== src) {
+                // Swap in the sharper version once it has loaded; keep the card's
+                // version if it fails
+                const preload = new Image();
+                preload.onload = () => {
+                    if (lightbox.open && token === lightboxToken) lightboxImage.src = large;
+                };
+                preload.src = large;
+            }
+            document.documentElement.classList.add('lightbox-open');
+            lightbox.showModal();
+        }
+
+        // A click anywhere (photo, backdrop or the close button) closes it;
+        // Esc is handled by <dialog> itself
+        lightbox.addEventListener('click', () => lightbox.close());
+        lightbox.addEventListener('close', () => {
+            document.documentElement.classList.remove('lightbox-open');
+            lightboxImage.removeAttribute('src');
+        });
+
         // Returns {id, url} for YouTube watch/share/shorts/embed links, else null.
         // Only a validated 11-character id and a youtube.com / youtu.be host are used.
         function parseYouTube(value) {
@@ -481,9 +535,18 @@
                         image.src = post.image;
                         image.alt = '';
                         image.loading = 'lazy';
+
+                        // Button wrapper makes the photo keyboard-accessible
+                        const zoom = document.createElement('button');
+                        zoom.type = 'button';
+                        zoom.className = 'tweet-image-button';
+                        zoom.setAttribute('aria-label', 'Suurenna kuva');
+                        zoom.appendChild(image);
+                        zoom.addEventListener('click', () => openLightbox(image.currentSrc || image.src));
+
                         // A cell that isn't a direct image URL would show a broken-image box
-                        image.addEventListener('error', () => image.remove());
-                        card.appendChild(image);
+                        image.addEventListener('error', () => zoom.remove());
+                        card.appendChild(zoom);
                     }
                 }
 

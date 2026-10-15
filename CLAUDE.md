@@ -28,6 +28,14 @@ reformatted as `https://drive.google.com/uc?export=view&id=<FILE_ID>`) — a nor
 Drive "share" link won't render as an `<img>` src. Rendered below the post text,
 capped at 320px height, cropped via `object-fit: cover`.
 
+**Clicking a photo opens it large** in a lightbox (one shared native `<dialog id="lightbox">`;
+click anywhere / the × / Esc closes; the photo card is a `<button>`, so Enter/Space works).
+Only photos do this — YouTube video cards stay plain links to YouTube. For
+`*.googleusercontent.com/pw/…` links the lightbox swaps in the same photo at `=w1600`
+(`largeImageUrl()`), since the copied link often carries a small size. Observed: a bare
+Google Photos link (no `=…` suffix) can return a downsized ~512px copy, not the original,
+so a photo can look soft when enlarged unless the link was copied at a decent size.
+
 The `image` cell can also hold a **YouTube link** (`youtube.com/watch?v=`, `youtu.be/`,
 `/shorts/`, `/embed/`, `/live/`): it renders as a 16:9 video card — the thumbnail
 (`i.ytimg.com/vi/<id>/hqdefault.jpg`, black bars cropped) with a play button, opening

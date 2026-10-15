@@ -16,7 +16,7 @@ A personal link hub for miikkis with a minimal black-and-white design.
 ### Three-Column Layout
 On wider screens the columns run horizontally in the order Links, Updates, Playlists (with YouTube channels below); on mobile they stack in that order.
 
-**Updates** — a self-hosted micro-feed of short posts, sourced live from a published Google Sheet (columns: `date`, `text`, `image`). Rendered as tweet-style cards, newest first, capped at 8, with a "Loading…" placeholder until the sheet responds. To post, add a row to the sheet — no code changes needed. Dates accept `YYYY-MM-DD` or `D.M.YYYY`. A leading `>` in the text renders the post as a styled blockquote, and literal newlines in the cell render as line breaks. `image` can carry an optional photo, or a YouTube link that renders as a clickable video thumbnail, shown below the post text (a post can also be media only).
+**Updates** — a self-hosted micro-feed of short posts, sourced live from a published Google Sheet (columns: `date`, `text`, `image`). Rendered as tweet-style cards, newest first, capped at 8, with a "Loading…" placeholder until the sheet responds. To post, add a row to the sheet — no code changes needed. Dates accept `YYYY-MM-DD` or `D.M.YYYY`. A leading `>` in the text renders the post as a styled blockquote, and literal newlines in the cell render as line breaks. `image` can carry an optional photo, or a YouTube link that renders as a clickable video thumbnail, shown below the post text (a post can also be media only). Clicking a photo opens it enlarged in a lightbox; video thumbnails link straight to YouTube.
 
 **Links** — three flat, bordered link cards:
 - Spotify
