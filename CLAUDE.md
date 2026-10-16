@@ -3,6 +3,9 @@
 Static site (no build step, no dependencies) — plain `index.html` + `styles.css`.
 Deployed via GitHub Pages to miikkis.fi (see `CNAME`).
 
+**Workflow:** commit and push changes straight to `main` — no feature branches or PRs
+(owner's preference). Every push to `main` deploys live, so test locally first.
+
 ## Local testing
 Must use a real HTTP server, not `file://` — the Updates feed fetches a Google
 Sheets CSV via `fetch()`, and Google's CORS headers omit `access-control-allow-origin`
