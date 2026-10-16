@@ -152,6 +152,11 @@ Brand-color service logos (Spotify/Suno/Instagram links, plus the YouTube headin
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
 accurate paths — don't hand-draw new ones if adding more services.
 
+## Notes link
+The last Links button ("Muistiinpanot") points to the Finnish-language study handbook at `https://i.miikkis.fi` —
+a separate repo, `miikkis-gh/notes` (MkDocs Material, deployed by its own Pages workflow).
+Nothing from it lives in this repo.
+
 ## YouTube channels
 Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of compact link cards
 (`.channel-links`, reusing `.link-button` minus its per-card entrance animation,
