@@ -158,7 +158,8 @@ accurate paths — don't hand-draw new ones if adding more services.
 ## Notes link
 The last Links button ("Notes") points to the Finnish-language study handbook at `https://i.miikkis.fi` —
 a separate repo, `miikkis-gh/notes` (MkDocs Material, deployed by its own Pages workflow).
-Nothing from it lives in this repo.
+Nothing from it lives in this repo. Its icon is the handbook's own logo
+(MkDocs Material's default `material/library`), so the two match.
 
 ## YouTube channels
 Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of compact link cards
