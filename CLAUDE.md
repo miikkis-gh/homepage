@@ -153,7 +153,7 @@ the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) 
 accurate paths — don't hand-draw new ones if adding more services.
 
 ## Notes link
-The last Links button ("Notes") points to the study handbook at `https://i.miikkis.fi` —
+The last Links button ("Muistiinpanot") points to the Finnish-language study handbook at `https://i.miikkis.fi` —
 a separate repo, `miikkis-gh/notes` (MkDocs Material, deployed by its own Pages workflow).
 Nothing from it lives in this repo.
 
