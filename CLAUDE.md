@@ -3,6 +3,21 @@
 Static site (no build step, no dependencies) — plain `index.html` + `styles.css`.
 Deployed via GitHub Pages to miikkis.fi (see `CNAME`).
 
+## Design system: Etch
+The look follows the owner's **Etch** design system (a claude.ai Design System artifact:
+https://claude.ai/artifact/16p7erD6h3dQ3uGAmwy7GF — its `project/README.md` is the brand book).
+Etch ships React components; this site does not use them. Instead `styles.css` re-implements
+them in plain CSS on Etch's token values (`--etch-*` on `:root`, copied from its `tokens.json`,
+Dark theme only), and `index.html` carries a vanilla-JS port of its engraving drawer (`Engrave`,
+fills every `[data-motif]` box: `nest`, `lanes`, `ladder`, `bus`, `comb`).
+Rules that matter when adding things:
+- Layout is a floor plan: a `.die` (metal frame + rails) holding `.cell`s. `.die--thin` for the
+  column panels; `.rails` is a transparent sub-grid whose gaps show the same metal.
+- Monochrome. No brand colours (service icons are `currentColor`), no rounded corners, no
+  shadows/glows/gradients except the metal, no entrance animations. Colour only for warnings.
+- Labels are `.micro` (Geist Mono, uppercase). Links are `a.cell` with a chevron (`#chevron` symbol).
+- Fonts: `fonts/Geist-Variable.woff2` and `fonts/GeistMono-Variable.woff2` (self-hosted, OFL).
+
 **Workflow:** commit and push changes straight to `main` — no feature branches or PRs
 (owner's preference). Every push to `main` deploys live, so test locally first.
 
@@ -13,7 +28,8 @@ for `Origin: null` (i.e. directly opened files), so the fetch silently fails.
 Run: `python3 -m http.server 8000` and test at `http://localhost:8000`.
 
 ## Updates feed
-`.about-column` renders a live post feed, not static content. Source is a published
+`#tweet-feed` (in `.col-updates`) renders a live post feed, not static content; each post is a
+`.cell`, headed by its date (no author line — the masthead names the page). Source is a published
 Google Sheet (CSV), URL hardcoded in `index.html` as `UPDATES_CSV_URL`. Columns:
 `date`, `text`, `image` (optional) — header row is optional (parser auto-detects it;
 without one, columns are assumed to be in that order), dates accept either
@@ -21,8 +37,8 @@ without one, columns are assumed to be in that order), dates accept either
 page load (no polling). To add a post: just add a row to the sheet, no deploy needed
 — but Google's own publish-to-web cache can lag a few minutes.
 
-`text` supports two conventions: a leading `>` renders the post as a styled
-blockquote (quote-card look), and literal newlines in the cell (Cmd/Option/Ctrl+Return
+`text` supports two conventions: a leading `>` renders the post as a blockquote
+(muted text under a "Lainaus" label), and literal newlines in the cell (Cmd/Option/Ctrl+Return
 in Sheets) render as line breaks (`white-space: pre-wrap` on both `.tweet-text` and
 `.tweet-quote`).
 
@@ -66,15 +82,15 @@ images closest to 1:1 or 4:3 crop least. The Google Photos direct-link trick
 is unofficial/undocumented — if a card image ever breaks, just re-copy the link.
 
 ## Live clock & location
-`.profile-section` shows two live lines above the columns:
-- **Clock** (`#clock`): ticks every second via `Intl.DateTimeFormat` with
+The hero die (`.die--hero`, under the "MIIKKIS" masthead) shows two live readouts beside the links:
+- **Clock** (`#clock-time` + `#clock-date`): ticks every second via `Intl.DateTimeFormat` with
   `timeZone: 'Europe/Helsinki'` — always Helsinki time regardless of visitor's
   own timezone.
 - **Location** (`#location`): fetched once per load from `LOCATION_CSV_URL` in
   `index.html` — a separate published CSV of a "Location" sheet tab (own
   `gid`, distinct from Updates' `gid=0`) in the same spreadsheet. Row 1 is
-  `place,date` (date as `D.M.YYYY`); the page shows `📍 place · D.M.` and hides
-  the line entirely if the date is missing or older than `LOCATION_MAX_AGE_MS`
+  `place,date` (date as `D.M.YYYY`); the page shows the place and "Saapunut D.M." and leaves
+  the cell as pure engraving if the date is missing or older than `LOCATION_MAX_AGE_MS`
   (7 days).
 
 The Location tab is written externally: an iPhone Shortcuts personal
@@ -108,7 +124,7 @@ Apps Script gotchas:
   and read them straight from the spreadsheet instead.
 
 ## Electricity price card
-Under the Links buttons (`.price-section`, heading "Pörssisähkö"): a stepped line/area
+Left column (`.col-price`, heading "Pörssisähkö"): a stepped line/area
 chart of Finnish spot prices for today + tomorrow, in c/kWh incl. VAT. Source is
 `https://api.spot-hinta.fi/TodayAndDayForward?region=FI&priceResolution=15`
 (`SPOT_PRICE_URL` in `index.html`) — free, no key, sends `Access-Control-Allow-Origin: *`.
@@ -151,27 +167,28 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
   `baseline.json` — which would then have to be added to the deploy allowlist.
 
 ## Icons
-Brand-color service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
+Service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
-accurate paths — don't hand-draw new ones if adding more services.
+accurate paths — don't hand-draw new ones if adding more services. Per Etch they're drawn in
+`currentColor`, not their brand colours.
 
 ## Notes link
-The last Links button ("Notes") points to the Finnish-language notes site at `https://i.miikkis.fi` —
+The last link cell ("Notes") points to the Finnish-language notes site at `https://i.miikkis.fi` —
 a separate repo, `miikkis-gh/notes` (MkDocs Material, deployed by its own Pages workflow).
 Nothing from it lives in this repo. Its icon is the handbook's own logo
 (MkDocs Material's default `material/library`), so the two match.
 
 ## YouTube channels
-Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of compact link cards
-(`.channel-links`, reusing `.link-button` minus its per-card entrance animation,
-since the column already fades in). To add one, copy an `<a>` in `index.html`
+Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of link cells
+(`.channel-links`). To add one, copy an `<a class="cell">` in `index.html`
 and change the `@handle` URL and name, under the right `.channel-group` category
 label (News & politics / Investigations / Science & education). The YouTube logo
 is from Simple Icons.
 
 ## Deploy allowlist
 `.github/workflows/deploy.yml` copies an explicit file list into `_site/` and
-deploys only that — README, CLAUDE.md, the font, etc. are not published. **Adding
+deploys only that — README, CLAUDE.md, `Derbyshire Bold.otf`, etc. are not published
+(the `fonts/` folder is). **Adding
 a new public file (image, font, page) means adding it to the `cp` line there**,
 or it'll 404 on the live site while working fine locally.
 
@@ -183,8 +200,8 @@ Pages' CDN. After pushing, changes can take a few minutes to appear — hard-ref
 ## Security posture (verified 2026-08-30)
 - HTTPS enforced, custom domain verified with GitHub (prevents dangling-CNAME takeover
   if the repo were ever deleted), DNS uses correct apex A-records to GitHub's Pages IPs.
-- `index.html` has a CSP meta tag (`default-src 'self'`, with explicit allowances for
-  Google Fonts, the Sheets CSV fetches, `api.spot-hinta.fi` (price card), the Spotify embed, and https/data images).
+- `index.html` has a CSP meta tag (`default-src 'self'`, `font-src 'self'` since fonts are
+  self-hosted, with explicit allowances for the Sheets CSV fetches, `api.spot-hinta.fi` (price card), the Spotify embed, and https/data images).
   Note the CSV fetch 307-redirects to a `*.googleusercontent.com` host, so `connect-src`
   must allow that origin too, not just `docs.google.com` — a stricter policy will
   silently break the Updates feed and location line.

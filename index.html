@@ -3,155 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://api.spot-hinta.fi https://fonts.googleapis.com https://fonts.gstatic.com; frame-src https://open.spotify.com; object-src 'none'; base-uri 'self'; form-action 'self'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://api.spot-hinta.fi; frame-src https://open.spotify.com; object-src 'none'; base-uri 'self'; form-action 'self'">
     <title>miikkis</title>
+    <meta name="theme-color" content="#000000">
+    <link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
+
     <!-- favicon.png -->
     <link rel="icon" type="image/png" href="/favicon.png">
-    
+
     <!-- Open Graph for Discord -->
     <meta property="og:title" content="miikkis.fi">
     <meta property="og:description" content="Links to my social media and online presence">
     <meta property="og:image" content="https://miikkis.fi/preview-image.png">
     <meta property="og:url" content="https://miikkis.fi/">
     <meta property="og:type" content="website">
-    
+
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content="https://miikkis.fi/preview-image.png">
 </head>
 <body>
-    <!-- Spotlight background -->
-    <div class="gradient-bg">
-        <div class="spotlight"></div>
-    </div>
+    <!-- Chevron marker reused by every link cell -->
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+        <symbol id="chevron" viewBox="0 0 24 24">
+            <path d="M9.5 5.5l6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"/>
+        </symbol>
+    </svg>
 
-    <!-- Noise overlay for texture -->
-    <div class="noise-overlay"></div>
-
-    <main class="container">
-        <header class="profile-section">
-            <p class="clock" id="clock"></p>
-            <p class="location" id="location" hidden>
-                <span id="location-text"></span>
-                <button type="button" class="location-info" id="location-info" aria-label="About location">
-                    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                        <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.3"/>
-                        <line x1="8" y1="7" x2="8" y2="11.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                        <circle cx="8" cy="4.6" r="0.9" fill="currentColor"/>
-                    </svg>
-                    <span class="location-tooltip" role="tooltip">Last arrival, auto-updated</span>
-                </button>
-            </p>
+    <main class="page">
+        <header class="masthead">
+            <h1 class="marking">Miikkis</h1>
         </header>
 
-        <div class="content-columns">
-        <div class="about-column">
-        <h2 class="column-heading">Päivitykset</h2>
-        <div id="tweet-feed" class="tweet-feed" aria-live="polite">
-            <p class="tweet-empty">Loading…</p>
-        </div>
-        </div>
+        <!-- Hero die: clock, location, links and an engraved core -->
+        <section class="die die--hero" aria-label="Kello, sijainti ja linkit" lang="fi">
+            <div class="cell cell--under hero-clock">
+                <span class="engraving" data-motif="bus" aria-hidden="true"></span>
+                <div class="cell-body">
+                    <p class="micro">Helsinki</p>
+                    <p class="readout-value" id="clock-time"></p>
+                    <p class="readout-caption" id="clock-date"></p>
+                </div>
+            </div>
 
-        <div class="links-column">
-        <h2 class="column-heading">Linkit</h2>
-        <nav class="links-container" role="navigation" aria-label="Social links">
+            <div class="cell hero-location" id="location-cell">
+                <span class="engraving" data-motif="lanes" aria-hidden="true"></span>
+                <div class="cell-body" id="location" hidden>
+                    <p class="micro cell-label">
+                        Sijainti
+                        <button type="button" class="location-info" id="location-info" aria-label="Tietoa sijainnista">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 4h16v16H4zM12 11v6M12 7v1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
+                            </svg>
+                            <span class="location-tooltip" role="tooltip">Viimeisin saapuminen, päivittyy automaattisesti</span>
+                        </button>
+                    </p>
+                    <p class="readout-place" id="location-text"></p>
+                    <p class="readout-caption" id="location-date"></p>
+                </div>
+            </div>
 
-            <a href="https://open.spotify.com/user/real_grened" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 0">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="#1ED760">
-                        <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                    </svg>
-                </span>
-                <span class="link-text">Spotify</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
+            <div class="cell hero-art" aria-hidden="true">
+                <span class="engraving" data-motif="nest"></span>
+            </div>
 
-            <a href="https://suno.com/@miikkis" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 1">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="#f5f5f7">
-                        <path d="M16.5 0C20.642 0 24 5.373 24 12h-9c0 6.627-3.358 12-7.5 12C3.358 24 0 18.627 0 12h9c0-6.627 3.358-12 7.5-12Z"/>
-                    </svg>
-                </span>
-                <span class="link-text">Suno</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
+            <nav class="hero-links" aria-label="Social links">
+                <a href="https://open.spotify.com/user/real_grened" class="cell cell--link" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                        </svg>
+                    </span>
+                    <span class="link-text">
+                        <span class="link-name">Spotify</span>
+                        <span class="micro link-host">open.spotify.com</span>
+                    </span>
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
+                </a>
 
-            <a href="https://instagram.com/miikkis.ig" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 2">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24">
-                        <defs>
-                            <linearGradient id="instagram-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#FFDC80"/>
-                                <stop offset="20%" stop-color="#FCAF45"/>
-                                <stop offset="40%" stop-color="#F77737"/>
-                                <stop offset="60%" stop-color="#F56040"/>
-                                <stop offset="75%" stop-color="#E1306C"/>
-                                <stop offset="90%" stop-color="#C13584"/>
-                                <stop offset="100%" stop-color="#833AB4"/>
-                            </linearGradient>
-                        </defs>
-                        <path fill="url(#instagram-gradient)" d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/>
-                    </svg>
-                </span>
-                <span class="link-text">Instagram</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
+                <a href="https://suno.com/@miikkis" class="cell cell--link" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M16.5 0C20.642 0 24 5.373 24 12h-9c0 6.627-3.358 12-7.5 12C3.358 24 0 18.627 0 12h9c0-6.627 3.358-12 7.5-12Z"/>
+                        </svg>
+                    </span>
+                    <span class="link-text">
+                        <span class="link-name">Suno</span>
+                        <span class="micro link-host">suno.com</span>
+                    </span>
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
+                </a>
 
-            <a href="https://i.miikkis.fi/" class="link-button" target="_blank" rel="noopener noreferrer" style="--delay: 3">
-                <span class="link-icon">
-                    <svg viewBox="0 0 24 24" fill="#f5f5f7">
-                        <path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/>
-                    </svg>
-                </span>
-                <span class="link-text">Notes</span>
-                <span class="link-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </span>
-            </a>
-        </nav>
+                <a href="https://instagram.com/miikkis.ig" class="cell cell--link" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/>
+                        </svg>
+                    </span>
+                    <span class="link-text">
+                        <span class="link-name">Instagram</span>
+                        <span class="micro link-host">instagram.com</span>
+                    </span>
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
+                </a>
 
-        <section class="price-section" aria-labelledby="price-title" lang="fi">
-            <h2 class="column-heading price-heading" id="price-title">Pörssisähkö</h2>
-            <div class="price-card">
+                <a href="https://i.miikkis.fi/" class="cell cell--link" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/>
+                        </svg>
+                    </span>
+                    <span class="link-text">
+                        <span class="link-name">Notes</span>
+                        <span class="micro link-host">i.miikkis.fi</span>
+                    </span>
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
+                </a>
+            </nav>
+        </section>
+
+        <div class="columns">
+        <section class="die die--thin col-updates" aria-labelledby="updates-title" lang="fi">
+            <header class="cell cell--head cell--under">
+                <span class="engraving" data-motif="comb" aria-hidden="true"></span>
+                <h2 class="micro" id="updates-title">Päivitykset</h2>
+            </header>
+            <div id="tweet-feed" class="rails tweet-feed" aria-live="polite">
+                <p class="cell tweet-empty">Ladataan…</p>
+            </div>
+            <div class="cell cell--art" aria-hidden="true">
+                <span class="engraving" data-motif="ladder"></span>
+            </div>
+        </section>
+
+        <section class="die die--thin col-price" aria-labelledby="price-title" lang="fi">
+            <header class="cell cell--head cell--under span-2">
+                <span class="engraving" data-motif="bus" aria-hidden="true"></span>
+                <h2 class="micro" id="price-title">Pörssisähkö</h2>
+            </header>
+            <div class="cell span-2" id="price-status-cell">
                 <p class="tweet-empty" id="price-status">Ladataan…</p>
-                <div class="price-body" id="price-body" hidden>
-                    <div class="price-now">
-                        <span class="price-value" id="price-value"></span>
+            </div>
+            <div class="price-body" id="price-body" hidden>
+                <div class="cell span-2 price-now">
+                    <p class="micro price-when" id="price-when"></p>
+                    <p class="price-now-row">
+                        <span class="readout-value" id="price-value"></span>
                         <span class="price-unit">c/kWh</span>
-                        <span class="price-when" id="price-when"></span>
-                    </div>
-                    <div class="price-controls">
-                        <fieldset class="price-seg">
-                            <legend class="visually-hidden">Hintanäkymä</legend>
-                            <label><input type="radio" name="price-mode" value="spot" checked><span>Pörssi</span></label>
-                            <label><input type="radio" name="price-mode" value="allin"><span>Kokonaishinta</span></label>
-                        </fieldset>
-                        <label class="price-company" id="price-company-wrap" hidden>
-                            <span class="visually-hidden">Verkkoyhtiö</span>
-                            <select id="price-company"></select>
-                        </label>
-                    </div>
+                    </p>
+                </div>
+                <div class="cell span-2 price-controls">
+                    <fieldset class="price-seg">
+                        <legend class="visually-hidden">Hintanäkymä</legend>
+                        <label><input type="radio" name="price-mode" value="spot" checked><span>Pörssi</span></label>
+                        <label><input type="radio" name="price-mode" value="allin"><span>Kokonaishinta</span></label>
+                    </fieldset>
+                    <label class="price-company" id="price-company-wrap" hidden>
+                        <span class="visually-hidden">Verkkoyhtiö</span>
+                        <select id="price-company"></select>
+                    </label>
+                </div>
+                <div class="cell span-2 cell--chart">
                     <div class="price-chart" id="price-chart"></div>
-                    <p class="price-range" id="price-range"></p>
+                </div>
+                <div class="cell price-extreme">
+                    <p class="micro">Halvin</p>
+                    <p class="price-extreme-value" id="price-low"></p>
+                    <p class="price-extreme-when" id="price-low-when"></p>
+                </div>
+                <div class="cell price-extreme">
+                    <p class="micro">Kallein</p>
+                    <p class="price-extreme-value" id="price-high"></p>
+                    <p class="price-extreme-when" id="price-high-when"></p>
+                </div>
+                <div class="cell span-2">
                     <p class="price-note" id="price-note"></p>
                     <p class="price-note" id="price-basic" hidden></p>
                     <details class="price-table-view">
@@ -166,85 +192,62 @@
                 </div>
             </div>
         </section>
-        </div>
 
-        <aside class="playlists-column" aria-label="Playlists and YouTube channels">
-            <h2 class="column-heading">Soittolistat</h2>
-            <div class="playlist-embeds">
-                <iframe style="border-radius: 12px" src="https://open.spotify.com/embed/playlist/4zuUxgPAw8MRIxP8i2FtzY?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="2026 syksy playlist"></iframe>
-                <iframe style="border-radius: 12px" src="https://open.spotify.com/embed/playlist/1HjNFpzIThXdkJYylLhSTI?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="2026 kesä playlist"></iframe>
+        <aside class="die die--thin col-lists" aria-label="Playlists and YouTube channels">
+            <header class="cell cell--head cell--under">
+                <span class="engraving" data-motif="comb" aria-hidden="true"></span>
+                <h2 class="micro">Soittolistat</h2>
+            </header>
+            <div class="cell cell--embed">
+                <iframe src="https://open.spotify.com/embed/playlist/4zuUxgPAw8MRIxP8i2FtzY?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="2026 syksy playlist"></iframe>
+            </div>
+            <div class="cell cell--embed">
+                <iframe src="https://open.spotify.com/embed/playlist/1HjNFpzIThXdkJYylLhSTI?utm_source=generator&theme=0" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="2026 kesä playlist"></iframe>
             </div>
 
-            <h2 class="column-heading channels-heading">
-                <span class="channels-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></span>
-                Katson
-            </h2>
-            <nav class="channel-links" aria-label="YouTube channels I watch">
-                <h3 class="channel-group">News &amp; politics</h3>
-                <a href="https://www.youtube.com/@SecularTalk" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Secular Talk</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+            <header class="cell cell--head cell--under">
+                <span class="engraving" data-motif="bus" aria-hidden="true"></span>
+                <svg class="head-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                <h2 class="micro" lang="fi">Katson</h2>
+            </header>
+            <nav class="rails channel-links" aria-label="YouTube channels I watch">
+                <h3 class="cell micro channel-group">News &amp; politics</h3>
+                <a href="https://www.youtube.com/@SecularTalk" class="cell" target="_blank" rel="noopener noreferrer">
+                    Secular Talk
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <a href="https://www.youtube.com/@JakeBroe" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Jake Broe</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <a href="https://www.youtube.com/@JakeBroe" class="cell" target="_blank" rel="noopener noreferrer">
+                    Jake Broe
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <a href="https://www.youtube.com/@realchris" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Chris Norlund</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <a href="https://www.youtube.com/@realchris" class="cell" target="_blank" rel="noopener noreferrer">
+                    Chris Norlund
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <h3 class="channel-group">Investigations</h3>
-                <a href="https://www.youtube.com/@Coffeezilla" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Coffeezilla</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <h3 class="cell micro channel-group">Investigations</h3>
+                <a href="https://www.youtube.com/@Coffeezilla" class="cell" target="_blank" rel="noopener noreferrer">
+                    Coffeezilla
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <a href="https://www.youtube.com/@GamersNexus" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Gamers Nexus</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <a href="https://www.youtube.com/@GamersNexus" class="cell" target="_blank" rel="noopener noreferrer">
+                    Gamers Nexus
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <h3 class="channel-group">Science &amp; education</h3>
-                <a href="https://www.youtube.com/@ProfessorDaveExplains" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">Professor Dave Explains</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <h3 class="cell micro channel-group">Science &amp; education</h3>
+                <a href="https://www.youtube.com/@ProfessorDaveExplains" class="cell" target="_blank" rel="noopener noreferrer">
+                    Professor Dave Explains
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
-                <a href="https://www.youtube.com/@RealLifeLore" class="link-button" target="_blank" rel="noopener noreferrer">
-                    <span class="link-text">RealLifeLore</span>
-                    <span class="link-arrow">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </span>
+                <a href="https://www.youtube.com/@RealLifeLore" class="cell" target="_blank" rel="noopener noreferrer">
+                    RealLifeLore
+                    <svg class="cell-go" aria-hidden="true"><use href="#chevron"/></svg>
                 </a>
             </nav>
         </aside>
         </div>
 
         <footer class="footer">
-            <p>&copy; 2026 miikkis</p>
+            <p class="micro">&copy; 2026 miikkis</p>
         </footer>
     </main>
 
@@ -253,31 +256,204 @@
         <img class="lightbox-image" id="lightbox-image" alt="">
         <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Sulje">
             <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/>
             </svg>
         </button>
     </dialog>
 
     <script>
-        // Add loaded class after a brief delay for smooth entrance
-        window.addEventListener('load', () => {
-            document.body.classList.add('loaded');
-        });
+        // Engraving: Etch's die line-work, drawn to each [data-motif] box's measured
+        // size. Ported from the Etch bundle (Engraving.draw) without React: every
+        // line centre is snapped to the pixel grid so the 1px strokes stay crisp.
+        const Engrave = (() => {
+            function Pen(u) { this.u = u; this.d = []; this.f = []; }
+            Pen.prototype.s = (v) => Math.floor(v) + 0.5;
+            Pen.prototype.h = function (x1, x2, y) {
+                if (x2 < x1) [x1, x2] = [x2, x1];
+                if (x2 - x1 >= 1) this.d.push(`M${Math.round(x1)} ${this.s(y)}H${Math.round(x2)}`);
+            };
+            Pen.prototype.v = function (x, y1, y2) {
+                if (y2 < y1) [y1, y2] = [y2, y1];
+                if (y2 - y1 >= 1) this.d.push(`M${this.s(x)} ${Math.round(y1)}V${Math.round(y2)}`);
+            };
+            Pen.prototype.rect = function (x, y, w, h) {
+                if (w < 2 || h < 2) return;
+                const x1 = this.s(x), y1 = this.s(y), x2 = this.s(x + w), y2 = this.s(y + h);
+                this.d.push(`M${x1} ${y1}H${x2}V${y2}H${x1}Z`);
+            };
+            Pen.prototype.fill = function (x, y, w, h) {
+                const a = Math.round(x), b = Math.round(y), c = Math.max(1, Math.round(w)), e = Math.max(1, Math.round(h));
+                this.f.push(`M${a} ${b}h${c}v${e}h${-c}Z`);
+            };
 
-        // Live Helsinki date/time clock at the top of the page
-        const clockEl = document.getElementById('clock');
-        const clockFormatter = new Intl.DateTimeFormat('fi-FI', {
+            function stack(p, x0, x1, y0, y1, n) {
+                p.rect(x0, y0, x1 - x0, y1 - y0);
+                n = Math.min(n, Math.floor((y1 - y0) / Math.max(2.75, p.u * 0.8)) - 1);
+                for (let i = 1; i <= n; i++) p.h(x0, x1, y0 + (y1 - y0) * i / (n + 1));
+            }
+            function hatch(p, x0, x1, y0, y1, pitch) {
+                p.rect(x0, y0, x1 - x0, y1 - y0);
+                const n = Math.floor((x1 - x0) / pitch);
+                for (let i = 1; i < n; i++) p.v(x0 + i * (x1 - x0) / n, y0, y1);
+            }
+
+            // The big block: full-width bands, doubled side rails, a banded frame, a three-row core
+            function nest(p, x, y, w, h, u) {
+                const sw = Math.min(w, h * 1.15), sx = x + (w - sw) / 2;
+                const X = (f) => sx + sw * f, Y = (f) => y + h * f;
+                p.h(x, x + w, Y(0.11)); p.h(x, x + w, Y(0.89));
+                p.h(x, x + w, Y(0.11) - u); p.h(x, x + w, Y(0.89) + u);
+                p.v(X(0.15), Y(0.11), Y(0.89)); p.v(X(0.85), Y(0.11), Y(0.89));
+                p.v(X(0.15) + u, Y(0.11), Y(0.89)); p.v(X(0.85) - u, Y(0.11), Y(0.89));
+                [true, false].forEach((top) => {
+                    const y0 = top ? Y(0.155) : Y(0.785);
+                    p.rect(X(0.27), y0, sw * 0.46, h * 0.06);
+                    p.h(X(0.27) + u, X(0.73) - u, y0 + h * 0.03);
+                    const a = top ? y0 + h * 0.06 : Y(0.73), b = top ? Y(0.27) : y0;
+                    p.v(X(0.27), a, b); p.v(X(0.73), a, b);
+                });
+                p.rect(X(0.21), Y(0.27), sw * 0.58, h * 0.46);
+                [0.275, 0.305, 0.335, 0.665, 0.695, 0.725].forEach((f) => p.v(X(f), Y(0.27), Y(0.73)));
+                [Y(0.44), Y(0.56)].forEach((yy) => { p.h(X(0.15) + u, X(0.21), yy); p.h(X(0.79), X(0.85) - u, yy); });
+                p.h(X(0.21), X(0.275), Y(0.5)); p.h(X(0.725), X(0.79), Y(0.5));
+                p.rect(X(0.40), Y(0.35), sw * 0.20, h * 0.30);
+                p.rect(X(0.425), Y(0.385), sw * 0.15, h * 0.23);
+                p.h(X(0.425), X(0.575), Y(0.385) + h * 0.23 / 3);
+                p.h(X(0.425), X(0.575), Y(0.385) + h * 0.46 / 3);
+                p.v(X(0.5), Y(0.215), Y(0.35)); p.v(X(0.5), Y(0.65), Y(0.785));
+                p.h(X(0.335), X(0.40), Y(0.5)); p.h(X(0.60), X(0.665), Y(0.5));
+            }
+
+            function capsule(p, cx, y0, y1, cw, u) {
+                p.rect(cx - cw / 2, y0, cw, y1 - y0);
+                p.v(cx - cw / 2 + u * 0.9, y0, y1); p.v(cx + cw / 2 - u * 0.9, y0, y1);
+                const ix0 = cx - cw / 2 + u * 1.9, ix1 = cx + cw / 2 - u * 1.9, iy0 = y0 + u * 1.4, iy1 = y1 - u * 1.4, hh = iy1 - iy0;
+                if (hh < u * 2) return;
+                p.rect(ix0, iy0, ix1 - ix0, hh);
+                if (hh >= u * 9) [0.12, 0.19, 0.81, 0.88].forEach((f) => p.h(ix0, ix1, iy0 + hh * f));
+                if (hh >= u * 5) {
+                    p.h(ix0, ix1, iy0 + hh * 0.47); p.h(ix0, ix1, iy0 + hh * 0.53);
+                    p.v(cx, iy0 + hh * 0.47, iy0 + hh * 0.53);
+                } else {
+                    p.h(ix0, ix1, iy0 + hh * 0.5);
+                }
+            }
+            // Parallel columns, each a long and a short capsule on a centre stem
+            function lanes(p, x, y, w, h, u) {
+                const n = Math.max(1, Math.round(w / (u * 11))), lw = w / n;
+                for (let i = 0; i < n; i++) {
+                    const lx = x + i * lw, cx = lx + lw / 2, cw = Math.max(lw * 0.62, u * 6);
+                    if (i) p.v(lx, y, y + h);
+                    const top = [1.2, 2.4, 3.6].map((k) => y + u * k);
+                    const bot = [1.2, 2.4, 3.6].map((k) => y + h - u * k);
+                    top.concat(bot).forEach((yy) => p.h(lx, lx + lw, yy));
+                    const a0 = y + h * 0.17, a1 = y + h * 0.55, b0 = y + h * 0.64, b1 = y + h * 0.82;
+                    p.v(cx, top[2], a0); p.v(cx, a1, b0); p.v(cx, b1, bot[2]);
+                    capsule(p, cx, a0, a1, cw, u); capsule(p, cx, b0, b1, cw, u);
+                    [0.29, 0.43, 0.73].forEach((f) => { p.h(lx, cx - cw / 2, y + h * f); p.h(cx + cw / 2, lx + lw, y + h * f); });
+                }
+            }
+
+            // A strip of modules: paired rung ladders with bracket bars, then a box of three bars
+            function ladder(p, x, y, w, h, u) {
+                const n = Math.max(1, Math.floor(w / (u * 20))), P = w / n, rung = u * 0.95;
+                for (let i = 0; i < n; i++) {
+                    const L0 = x + i * P, L1 = L0 + P * 0.19, L2 = L0 + P * 0.38;
+                    if (i) p.v(L0, y, y + h);
+                    p.v(L1, y, y + h); p.v(L2, y, y + h);
+                    const k = Math.max(3, Math.floor(h * 0.24 / rung));
+                    for (let j = 0; j < k; j++) { p.h(L0, L2, y + rung * (j + 1)); p.h(L0, L2, y + h - rung * (j + 1)); }
+                    [y + rung * (k + 1.4), y + h - rung * (k + 1.4) - rung * 0.8].forEach((yy) => {
+                        p.rect(L0 + u * 0.6, yy, (L2 - L0) - u * 1.2, rung * 0.8);
+                        p.fill(L0 + u * 0.35, yy - u * 0.25, u * 0.5 + 1, rung * 0.8 + u * 0.5);
+                        p.fill(L2 - u * 0.85, yy - u * 0.25, u * 0.5 + 1, rung * 0.8 + u * 0.5);
+                    });
+                    p.h(L0, L1, y + h * 0.5 - rung / 2); p.h(L0, L1, y + h * 0.5 + rung / 2);
+                    const B0 = L0 + P * 0.56, B1 = L0 + P * 0.78;
+                    p.v(B0, y, y + h); p.v(B1, y, y + h);
+                    p.h(B0, B1, y + h * 0.33); p.h(B0, B1, y + h * 0.67);
+                    p.v(B0 + (B1 - B0) * 0.33, y + h * 0.33, y + h * 0.67); p.v(B0 + (B1 - B0) * 0.67, y + h * 0.33, y + h * 0.67);
+                    p.h(B0, B1, y + h * 0.33 + u); p.h(B0, B1, y + h * 0.67 - u);
+                }
+            }
+
+            // A horizontal bus: a channel of stacks, boxes and hatching between partitioned rails
+            function bus(p, x, y, w, h, u) {
+                const c0 = y + h * 0.36, c1 = y + h * 0.64;
+                p.h(x, x + w, c0); p.h(x, x + w, c1);
+                const segs = [0, 0.16, 0.22, 0.30, 0.44, 0.52, 0.62, 0.80, 0.86, 1.0];
+                ['stack', 'box', 'hatch', 'gap', 'core', 'gap', 'stack', 'hatch', 'box'].forEach((kind, i) => {
+                    const a = x + w * segs[i], b = x + w * segs[i + 1];
+                    if (i) p.v(a, c0, c1);
+                    if (kind === 'stack') stack(p, a + u, b - u, c0 + u * 0.8, c1 - u * 0.8, 3);
+                    else if (kind === 'hatch') hatch(p, a + u * 0.6, b - u * 0.6, c0 + u * 0.8, c1 - u * 0.8, u * 0.8);
+                    else if (kind === 'box') p.rect(a + u, c0 + u, (b - a) - 2 * u, (c1 - c0) - 2 * u);
+                    else if (kind === 'core') { p.rect(a + u, c0 + u * 0.8, (b - a) - 2 * u, (c1 - c0) - u * 1.6); p.v((a + b) / 2, c0 + u * 0.8, c1 - u * 0.8); }
+                });
+                [0.12, 0.30, 0.37, 0.58, 0.74, 0.90].forEach((f) => p.v(x + w * f, y, c0));
+                [0.08, 0.26, 0.48, 0.55, 0.70, 0.94].forEach((f) => p.v(x + w * f, c1, y + h));
+                p.h(x, x + w * 0.30, y + h * 0.18); p.h(x + w * 0.58, x + w, y + h * 0.18); p.h(x + w * 0.26, x + w * 0.70, y + h * 0.82);
+            }
+
+            // Hatched rows between partitions
+            function comb(p, x, y, w, h, u) {
+                [[0.08, 0.30], [0.40, 0.60], [0.70, 0.92]].forEach((row, i) => {
+                    const y0 = y + h * row[0], y1 = y + h * row[1];
+                    p.h(x, x + w, y0); p.h(x, x + w, y1);
+                    const cuts = i === 1 ? [[0.06, 0.24], [0.32, 0.68], [0.76, 0.94]] : [[0.06, 0.40], [0.48, 0.94]];
+                    cuts.forEach((c) => hatch(p, x + w * c[0], x + w * c[1], y0 + u * 0.8, y1 - u * 0.8, u * 0.8));
+                });
+                [[0.30, 0.40], [0.60, 0.70]].forEach((g) => {
+                    [0.2, 0.5, 0.8].forEach((f) => p.v(x + w * f, y + h * g[0], y + h * g[1]));
+                });
+            }
+
+            const MOTIFS = { nest, lanes, ladder, bus, comb };
+            const PITCH = 5;
+
+            function draw(el) {
+                const w = Math.round(el.clientWidth), h = Math.round(el.clientHeight);
+                if (w < 5 || h < 5) { el.innerHTML = ''; return; }
+                const p = new Pen(PITCH);
+                (MOTIFS[el.dataset.motif] || nest)(p, 0, 0, w, h, PITCH);
+                el.innerHTML = `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" focusable="false" shape-rendering="crispEdges">`
+                    + `<path d="${p.d.join('')}" fill="none" stroke="currentColor" stroke-width="1"/>`
+                    + (p.f.length ? `<path d="${p.f.join('')}" fill="currentColor"/>` : '')
+                    + '</svg>';
+            }
+
+            // Redraw whenever a box changes size (layout breakpoints, feed loading)
+            const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver((entries) => {
+                entries.forEach((entry) => draw(entry.target));
+            });
+            return (root) => root.querySelectorAll('[data-motif]').forEach((el) => {
+                draw(el);
+                if (observer) observer.observe(el);
+            });
+        })();
+        Engrave(document);
+
+        // Live Helsinki clock in the hero: time as the readout, date as its caption
+        const clockTimeEl = document.getElementById('clock-time');
+        const clockDateEl = document.getElementById('clock-date');
+        const clockTimeFormatter = new Intl.DateTimeFormat('fi-FI', {
             timeZone: 'Europe/Helsinki',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
             second: '2-digit',
         });
+        const clockDateFormatter = new Intl.DateTimeFormat('fi-FI', {
+            timeZone: 'Europe/Helsinki',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'numeric',
+            year: 'numeric',
+        });
 
         function updateClock() {
-            clockEl.textContent = clockFormatter.format(new Date());
+            const now = new Date();
+            clockTimeEl.textContent = clockTimeFormatter.format(now);
+            clockDateEl.textContent = clockDateFormatter.format(now);
         }
 
         updateClock();
@@ -304,9 +480,12 @@
                 if (!place || Date.now() - updatedAt > LOCATION_MAX_AGE_MS) return;
 
                 const dateMatch = updated.match(/^(\d{1,2})\.(\d{1,2})\./);
-                const shortDate = dateMatch ? ` · ${dateMatch[1]}.${dateMatch[2]}.` : '';
-                document.getElementById('location-text').textContent = `📍 ${place}${shortDate}`;
+                document.getElementById('location-text').textContent = place;
+                document.getElementById('location-date').textContent =
+                    dateMatch ? `Saapunut ${dateMatch[1]}.${dateMatch[2]}.` : '';
                 document.getElementById('location').hidden = false;
+                // Engraving fades behind the text instead of filling the empty cell
+                document.getElementById('location-cell').classList.add('cell--under');
             })
             .catch((err) => console.error('Failed to load location:', err));
 
@@ -321,20 +500,6 @@
             document.addEventListener('click', () => locationInfo.classList.remove('open'));
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') locationInfo.classList.remove('open');
-            });
-        }
-
-        // Subtle mouse-parallax for the background spotlight
-        const spotlight = document.querySelector('.spotlight');
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-        if (spotlight && !prefersReducedMotion) {
-            const maxOffset = 40;
-            window.addEventListener('mousemove', (e) => {
-                const xRatio = e.clientX / window.innerWidth - 0.5;
-                const yRatio = e.clientY / window.innerHeight - 0.5;
-                spotlight.style.transform =
-                    `translate(${xRatio * maxOffset * 2}px, ${yRatio * maxOffset * 2}px)`;
             });
         }
 
@@ -506,30 +671,22 @@
 
             if (!posts.length) {
                 const empty = document.createElement('p');
-                empty.className = 'tweet-empty';
-                empty.textContent = 'No updates yet.';
+                empty.className = 'cell tweet-empty';
+                empty.textContent = 'Ei päivityksiä vielä.';
                 feed.appendChild(empty);
                 return;
             }
 
             posts.slice(0, MAX_UPDATES).forEach((post) => {
                 const card = document.createElement('article');
-                card.className = 'tweet-card';
+                card.className = 'cell tweet-card';
 
-                const header = document.createElement('div');
-                header.className = 'tweet-header';
-
-                const name = document.createElement('span');
-                name.className = 'tweet-name';
-                name.textContent = 'miikkis';
-
-                const date = document.createElement('span');
-                date.className = 'tweet-date';
+                // The masthead already names the author, so a card is headed by its date
+                const date = document.createElement('p');
+                date.className = 'micro tweet-date';
                 date.textContent = post.date;
 
-                header.append(name, date);
-
-                card.appendChild(header);
+                card.appendChild(date);
 
                 if (post.text) {
                     const isQuote = post.text.startsWith('>');
@@ -613,8 +770,8 @@
                 const feed = document.getElementById('tweet-feed');
                 feed.innerHTML = '';
                 const errorMsg = document.createElement('p');
-                errorMsg.className = 'tweet-empty';
-                errorMsg.textContent = "Couldn't load updates.";
+                errorMsg.className = 'cell tweet-empty';
+                errorMsg.textContent = 'Päivityksiä ei saatu ladattua.';
                 feed.appendChild(errorMsg);
             });
 
@@ -840,20 +997,22 @@
             svgEl('path', { d: line, class: 'price-line' }, svg);
 
             // Hover layer: crosshair + dot
+            // Markers are squares (Etch: nothing is rounded), centred on (cx, cy)
+            const DOT = 7;
+            const placeDot = (dot, cx, cy) => {
+                dot.setAttribute('x', cx - DOT / 2);
+                dot.setAttribute('y', cy - DOT / 2);
+            };
             const cross = svgEl('line', { y1: m.t, y2: m.t + ph, class: 'price-cross', visibility: 'hidden' }, svg);
-            const hoverDot = svgEl('circle', { r: 4, class: 'price-dot', visibility: 'hidden' }, svg);
+            const hoverDot = svgEl('rect', { width: DOT, height: DOT, class: 'price-dot', visibility: 'hidden' }, svg);
 
             // "Now" marker on the current slot
             const nowIndex = findPriceIndex(Date.now());
             priceState.nowIndex = nowIndex;
             if (nowIndex >= 0) {
                 const p = points[nowIndex];
-                svgEl('circle', {
-                    cx: xAt(p.t + slotMs / 2),
-                    cy: yAt(priceValue(p)),
-                    r: 4,
-                    class: 'price-dot',
-                }, svg);
+                placeDot(svgEl('rect', { width: DOT, height: DOT, class: 'price-dot' }, svg),
+                    xAt(p.t + slotMs / 2), yAt(priceValue(p)));
             }
 
             // Tooltip (values via textContent)
@@ -872,8 +1031,7 @@
                 cross.setAttribute('x1', cx);
                 cross.setAttribute('x2', cx);
                 cross.setAttribute('visibility', 'visible');
-                hoverDot.setAttribute('cx', cx);
-                hoverDot.setAttribute('cy', yAt(priceValue(p)));
+                placeDot(hoverDot, cx, yAt(priceValue(p)));
                 hoverDot.setAttribute('visibility', 'visible');
 
                 const end = priceMeta(p.t + slotMs).time;
@@ -937,15 +1095,10 @@
             // Low / high across the whole window
             const low = points.reduce((a, b) => (priceValue(b) < priceValue(a) ? b : a));
             const high = points.reduce((a, b) => (priceValue(b) > priceValue(a) ? b : a));
-            const range = document.getElementById('price-range');
-            range.innerHTML = '';
-            [['Halvin', low], ['Kallein', high]].forEach(([name, p]) => {
-                const item = document.createElement('span');
-                const strong = document.createElement('strong');
-                strong.textContent = formatPrice(priceValue(p));
-                item.append(`${name} `, strong,
-                    ` · ${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`);
-                range.appendChild(item);
+            [['price-low', low], ['price-high', high]].forEach(([id, p]) => {
+                document.getElementById(id).textContent = formatPrice(priceValue(p));
+                document.getElementById(`${id}-when`).textContent =
+                    `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`;
             });
 
             // Notes under the chart
@@ -1043,7 +1196,7 @@
                     renderPriceCard();
                 });
 
-                document.getElementById('price-status').hidden = true;
+                document.getElementById('price-status-cell').hidden = true;
                 document.getElementById('price-body').hidden = false;
                 renderPriceCard();
 
