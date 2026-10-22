@@ -82,7 +82,7 @@ images closest to 1:1 or 4:3 crop least. The Google Photos direct-link trick
 is unofficial/undocumented — if a card image ever breaks, just re-copy the link.
 
 ## Live clock & location
-The hero die (`.die--hero`, under the "MIIKKIS" masthead) shows two live readouts beside the links:
+The hero die (`.die--hero`, under the "MIIKKIS.FI" masthead) shows two live readouts beside the links:
 - **Clock** (`#clock-time` + `#clock-date`): ticks every second via `Intl.DateTimeFormat` with
   `timeZone: 'Europe/Helsinki'` — always Helsinki time regardless of visitor's
   own timezone.
