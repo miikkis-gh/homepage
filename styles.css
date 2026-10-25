@@ -344,6 +344,17 @@ a.cell:focus-visible .cell-go {
   padding-right: calc(var(--etch-space-4) + var(--etch-icon));
 }
 
+/* Disabled links (`hidden`): the rest widen to fill the row (8 cols beside the art) */
+.die--hero .cell--link[hidden] {
+  display: none;
+}
+
+@media (min-width: 841px) {
+  .hero-links:has(> .cell--link[hidden]) > .cell--link {
+    grid-column: span 4;
+  }
+}
+
 .link-icon {
   display: block;
   width: 22px;

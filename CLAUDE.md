@@ -176,6 +176,12 @@ the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) 
 accurate paths — don't hand-draw new ones if adding more services. Per Etch they're drawn in
 `currentColor`, not their brand colours.
 
+## Disabled hero links
+Suno and Notes are **currently disabled** (2026-10-25): their `<a class="cell cell--link">` carry
+`hidden`. While any link is hidden, the remaining ones span 4 of the hero's 12 columns on desktop
+(a `:has()` rule in `styles.css`, scoped to `min-width: 841px`) so two links fill the row; the
+narrower breakpoints already fit two per row. Remove `hidden` to restore them.
+
 ## Notes link
 The last link cell ("Notes") points to the Finnish-language notes site at `https://i.miikkis.fi` —
 a separate repo, `miikkis-gh/notes` (MkDocs Material, deployed by its own Pages workflow).
