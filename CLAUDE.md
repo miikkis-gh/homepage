@@ -28,6 +28,10 @@ for `Origin: null` (i.e. directly opened files), so the fetch silently fails.
 Run: `python3 -m http.server 8000` and test at `http://localhost:8000`.
 
 ## Updates feed
+**Currently disabled** (2026-10-25): the `.col-updates` section carries `hidden`, which hides it,
+switches `.columns` to a two-column price | playlists grid (via `:has()` in `styles.css`) and
+skips the CSV fetch. Remove `hidden` to bring it back — nothing else needs changing.
+
 `#tweet-feed` (in `.col-updates`) renders a live post feed, not static content; each post is a
 `.cell`, headed by its date (no author line — the masthead names the page). Source is a published
 Google Sheet (CSV), URL hardcoded in `index.html` as `UPDATES_CSV_URL`. Columns:

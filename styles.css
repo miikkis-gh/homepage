@@ -502,6 +502,16 @@ a.cell:focus-visible .link-icon {
   grid-area: updates;
 }
 
+/* Updates feed disabled (`hidden` on .col-updates): price | playlists */
+.col-updates[hidden] {
+  display: none;
+}
+
+.columns:has(> .col-updates[hidden]) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "price lists";
+}
+
 .col-price {
   grid-area: price;
 }
@@ -1199,6 +1209,13 @@ html.lightbox-open {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "updates"
+      "price"
+      "lists";
+  }
+
+  .columns:has(> .col-updates[hidden]) {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
       "price"
       "lists";
   }

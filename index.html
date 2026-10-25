@@ -124,7 +124,8 @@
         </section>
 
         <div class="columns">
-        <section class="die die--thin col-updates" aria-labelledby="updates-title" lang="fi">
+        <!-- Updates feed disabled: remove `hidden` to bring it back (CSS and script follow it) -->
+        <section class="die die--thin col-updates" aria-labelledby="updates-title" lang="fi" hidden>
             <header class="cell cell--head cell--under">
                 <span class="engraving" data-motif="comb" aria-hidden="true"></span>
                 <h2 class="micro" id="updates-title">Päivitykset</h2>
@@ -737,7 +738,7 @@
             return Number.isNaN(fallback) ? -Infinity : fallback;
         }
 
-        fetch(UPDATES_CSV_URL)
+        if (!document.querySelector('.col-updates').hidden) fetch(UPDATES_CSV_URL)
             .then((res) => {
                 if (!res.ok) throw new Error(`Sheet fetch failed: ${res.status}`);
                 return res.text();
