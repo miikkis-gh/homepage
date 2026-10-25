@@ -15,6 +15,8 @@ Rules that matter when adding things:
   column panels; `.rails` is a transparent sub-grid whose gaps show the same metal.
 - Monochrome. No brand colours (service icons are `currentColor`), no rounded corners, no
   shadows/glows/gradients except the metal, no entrance animations. Colour only for warnings.
+  **Owner-approved exception:** the Katson section uses YouTube red (`--youtube-red`, not an Etch
+  token) for its heading logo (red body + white play triangle) and the `.channel-group` labels.
 - Labels are `.micro` (Geist Mono, uppercase). Links are `a.cell` with a chevron (`#chevron` symbol).
 - Fonts: `fonts/Geist-Variable.woff2` and `fonts/GeistMono-Variable.woff2` (self-hosted, OFL).
 
@@ -174,7 +176,7 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
 Service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
 accurate paths — don't hand-draw new ones if adding more services. Per Etch they're drawn in
-`currentColor`, not their brand colours.
+`currentColor`, not their brand colours — except the YouTube heading logo, which is red (see Etch above).
 
 ## Disabled hero links
 Suno and Notes are **currently disabled** (2026-10-25): their `<a class="cell cell--link">` carry

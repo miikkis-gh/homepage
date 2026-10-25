@@ -42,6 +42,7 @@
   --etch-heat: #ffb224;
   --etch-fault: #ff5c4d;
   --etch-focus: var(--etch-ink);
+  --youtube-red: #ff0000; /* not Etch: brand red, Katson section only */
 
   /* Type */
   --font-etch-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
@@ -263,6 +264,11 @@ blockquote {
   width: var(--etch-icon);
   height: var(--etch-icon);
   color: var(--etch-ink-muted);
+}
+
+/* The one brand-colour exception: YouTube red on the Katson logo + category labels */
+.head-icon--youtube {
+  color: var(--youtube-red);
 }
 
 /* Engraving-only filler at the foot of a column */
@@ -762,6 +768,7 @@ html.lightbox-open {
 }
 
 .channel-group {
+  color: var(--youtube-red);
   padding-top: var(--etch-space-3);
   padding-bottom: var(--etch-space-2);
 }
