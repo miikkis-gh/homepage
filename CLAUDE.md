@@ -192,7 +192,7 @@ Nothing from it lives in this repo. Its icon is the handbook's own logo
 Third column, below Playlists, headed "Katson" ("Watching"): a hardcoded list of link cells
 (`.channel-links`). To add one, copy an `<a class="cell">` in `index.html`
 and change the `@handle` URL and name, under the right `.channel-group` category
-label (News & politics / Investigations / Science & education). The YouTube logo
+label (Uutiset ja politiikka / Tutkiva journalismi / Tiede ja koulutus). The YouTube logo
 is from Simple Icons.
 
 ## Deploy allowlist
