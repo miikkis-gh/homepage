@@ -142,6 +142,13 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
 - Chart is hand-built inline SVG (no library). Hover/touch shows a crosshair +
   tooltip; the SVG is focusable and Left/Right arrows step through slots. A
   "Table view" `<details>` lists every slot, so nothing depends on hover.
+- **Paras aika (best time):** the cheapest unbroken 1 / 3 / 6 h window (picker, default 3 h,
+  persisted as `priceWindow`) from the current slot onward, by `priceValue()` (follows Pörssi /
+  Kokonaishinta). Shown as a diagonal-hatched band behind the line (SVG `<pattern>`, no colour),
+  a readout cell under the chart, a tooltip line and "Paras" rows in the table. If the window is
+  less than `PRICE_FLAT_SAVING` (0.5 c/kWh) below the average of the remaining slots, there's
+  no band and the readout says "Ei merkittävää eroa". With fewer than N hours left (evening,
+  before tomorrow's prices are out) it shows "–". Recomputed each time the slot changes.
 - All times are formatted in `Europe/Helsinki`, like the clock.
 - Other Finnish price APIs (porssisahko.net, sahkohinta-api.fi) have no CORS headers, so
   they can't be called from the browser; spot-hinta.fi has no history endpoint.

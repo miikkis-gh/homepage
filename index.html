@@ -168,6 +168,19 @@
                 <div class="cell span-2 cell--chart">
                     <div class="price-chart" id="price-chart"></div>
                 </div>
+                <div class="cell span-2 price-best">
+                    <div class="price-best-head">
+                        <p class="micro">Paras aika</p>
+                        <fieldset class="price-seg price-seg--hours">
+                            <legend class="visually-hidden">Jakson pituus</legend>
+                            <label><input type="radio" name="price-window" value="1"><span>1 h</span></label>
+                            <label><input type="radio" name="price-window" value="3" checked><span>3 h</span></label>
+                            <label><input type="radio" name="price-window" value="6"><span>6 h</span></label>
+                        </fieldset>
+                    </div>
+                    <p class="price-best-value" id="price-best"></p>
+                    <p class="price-extreme-when" id="price-best-detail"></p>
+                </div>
                 <div class="cell price-extreme">
                     <p class="micro">Halvin</p>
                     <p class="price-extreme-value" id="price-low"></p>
@@ -789,7 +802,12 @@
             nowIndex: -1,
             mode: 'spot', // 'spot' | 'allin'
             companyId: 'caruna',
+            windowHours: 3, // length of the "Paras aika" window: 1 | 3 | 6
         };
+        const PRICE_WINDOW_HOURS = [1, 3, 6];
+        // Below this saving (c/kWh vs. the average of the remaining slots) the
+        // day counts as flat and no window is highlighted
+        const PRICE_FLAT_SAVING = 0.5;
 
         // "All-in" view = spot + the chosen network company's general-transfer
         // (yleissiirto) c/kWh + electricity tax, all incl. 25.5 % VAT. The basic
@@ -915,6 +933,36 @@
             return -1;
         }
 
+        // Cheapest unbroken run of `windowHours` from the current slot onward
+        // (earliest wins a tie). Null when no current slot or too few slots are
+        // left (e.g. late evening before tomorrow's prices are published).
+        function findBestWindow() {
+            const { points, slotMs, nowIndex } = priceState;
+            const n = Math.round((priceState.windowHours * 3600000) / slotMs);
+            if (nowIndex < 0 || points.length - nowIndex < n) return null;
+            const values = points.slice(nowIndex).map(priceValue);
+            let sum = 0;
+            for (let i = 0; i < n; i++) sum += values[i];
+            let best = sum;
+            let bestAt = 0;
+            for (let i = n; i < values.length; i++) {
+                sum += values[i] - values[i - n];
+                if (sum < best - 1e-9) {
+                    best = sum;
+                    bestAt = i - n + 1;
+                }
+            }
+            const avg = best / n;
+            const restAvg = values.reduce((a, b) => a + b, 0) / values.length;
+            return {
+                start: nowIndex + bestAt,
+                end: nowIndex + bestAt + n - 1,
+                avg,
+                saving: restAvg - avg,
+                flat: restAvg - avg < PRICE_FLAT_SAVING,
+            };
+        }
+
         function priceDayLabel(meta, todayKey, dayKeys) {
             if (meta.key === todayKey) return 'Tänään';
             if (dayKeys[dayKeys.indexOf(meta.key) - 1] === todayKey) return 'Huomenna';
@@ -944,13 +992,47 @@
             const todayKey = priceMeta(Date.now()).key;
             const dayKeys = [...new Set(points.map((p) => p.meta.key))];
 
+            const nowIndex = findPriceIndex(Date.now());
+            priceState.nowIndex = nowIndex;
+            const best = findBestWindow();
+            priceState.best = best;
+            const hours = priceState.windowHours;
+            let bestText = '';
+            if (best) {
+                const startMeta = points[best.start].meta;
+                const end = priceMeta(points[best.end].t + slotMs).time;
+                bestText = best.start === nowIndex ? `Nyt–${end}` :
+                    `${priceDayLabel(startMeta, todayKey, dayKeys)} ${startMeta.time}–${end}`;
+            }
+
             const svg = svgEl('svg', {
                 viewBox: `0 0 ${W} ${H}`,
                 class: 'price-svg',
                 tabindex: '0',
                 role: 'img',
-                'aria-label': 'Pörssisähkön hinta tänään ja huomenna. Tarkastele 15 minuutin jaksoja vasemmalla ja oikealla nuolinäppäimellä.',
+                'aria-label': 'Pörssisähkön hinta tänään ja huomenna. Tarkastele 15 minuutin jaksoja vasemmalla ja oikealla nuolinäppäimellä.' +
+                    (best && !best.flat ? ` Halvin ${hours} tunnin jakso: ${bestText}, keskihinta ${formatPrice(best.avg)} c/kWh.` : ''),
             }, chart);
+
+            // "Paras aika" window: hatched band behind the line (no colour, per Etch)
+            if (best && !best.flat) {
+                const pattern = svgEl('pattern', {
+                    id: 'price-hatch',
+                    width: 3,
+                    height: 3,
+                    patternUnits: 'userSpaceOnUse',
+                    patternTransform: 'rotate(45)',
+                }, svgEl('defs', {}, svg));
+                svgEl('line', { x1: 0, y1: 0, x2: 0, y2: 3, class: 'price-hatch-line' }, pattern);
+                const x0 = xAt(points[best.start].t);
+                svgEl('rect', {
+                    x: x0,
+                    y: m.t,
+                    width: xAt(points[best.end].t + slotMs) - x0,
+                    height: ph,
+                    class: 'price-best-band',
+                }, svg);
+            }
 
             // Gridlines + y labels
             ticks.forEach((v) => {
@@ -1008,8 +1090,6 @@
             const hoverDot = svgEl('rect', { width: DOT, height: DOT, class: 'price-dot', visibility: 'hidden' }, svg);
 
             // "Now" marker on the current slot
-            const nowIndex = findPriceIndex(Date.now());
-            priceState.nowIndex = nowIndex;
             if (nowIndex >= 0) {
                 const p = points[nowIndex];
                 placeDot(svgEl('rect', { width: DOT, height: DOT, class: 'price-dot' }, svg),
@@ -1023,7 +1103,9 @@
             const tipValue = document.createElement('strong');
             const tipTime = document.createElement('span');
             const tipParts = document.createElement('span');
-            tip.append(tipValue, tipTime, tipParts);
+            const tipBest = document.createElement('span');
+            tipBest.textContent = `Halvin ${hours} h jakso`;
+            tip.append(tipValue, tipTime, tipParts, tipBest);
             chart.appendChild(tip);
 
             function showSlot(i) {
@@ -1043,6 +1125,7 @@
                 tipParts.textContent = parts.transfer === undefined ? '' :
                     `pörssi ${formatPrice(parts.spot)} + siirto ${formatPrice(parts.transfer)} + vero ${formatPrice(parts.tax)}`;
                 tipParts.hidden = parts.transfer === undefined;
+                tipBest.hidden = !(best && !best.flat && i >= best.start && i <= best.end);
                 tip.hidden = false;
                 // Sit right of the crosshair, flip left if it would overflow,
                 // and never leave the chart's own width
@@ -1093,6 +1176,21 @@
                 whenEl.textContent = 'Ei nykyhintaa';
             }
 
+            // "Paras aika" readout
+            const bestEl = document.getElementById('price-best');
+            const bestDetail = document.getElementById('price-best-detail');
+            if (!best) {
+                bestEl.textContent = '–';
+                bestDetail.textContent = nowIndex < 0 ? 'Ei nykyhintaa' :
+                    `Alle ${hours} h hintoja jäljellä · huomisen hinnat julkaistaan yleensä iltapäivällä`;
+            } else if (best.flat) {
+                bestEl.textContent = 'Ei merkittävää eroa';
+                bestDetail.textContent = `Halvin ${hours} h jakso ${bestText.charAt(0).toLowerCase()}${bestText.slice(1)} on vain ${formatPrice(best.saving)} c/kWh keskihintaa halvempi`;
+            } else {
+                bestEl.textContent = bestText;
+                bestDetail.textContent = `Keskihinta ${formatPrice(best.avg)} c/kWh`;
+            }
+
             // Low / high across the whole window
             const low = points.reduce((a, b) => (priceValue(b) < priceValue(a) ? b : a));
             const high = points.reduce((a, b) => (priceValue(b) > priceValue(a) ? b : a));
@@ -1131,11 +1229,19 @@
                 head.appendChild(th);
             });
             body.innerHTML = '';
-            points.forEach((p) => {
+            const best = priceState.best && !priceState.best.flat ? priceState.best : null;
+            points.forEach((p, i) => {
                 const parts = priceBreakdown(p);
                 const row = document.createElement('tr');
                 const time = document.createElement('td');
                 time.textContent = `${priceDayLabel(p.meta, todayKey, dayKeys)} ${p.meta.time}`;
+                if (best && i >= best.start && i <= best.end) {
+                    row.className = 'is-best';
+                    const tag = document.createElement('span');
+                    tag.className = 'price-table-best';
+                    tag.textContent = 'Paras';
+                    time.append(' ', tag);
+                }
                 row.appendChild(time);
                 (allIn ? [parts.spot, parts.transfer, parts.tax, parts.total] : [parts.total]).forEach((v) => {
                     const cell = document.createElement('td');
@@ -1167,6 +1273,8 @@
                 priceState.mode = savedMode === 'allin' ? 'allin' : 'spot';
                 const savedCompany = loadPricePref('priceCompany', priceState.companyId);
                 if (GRID_FEES.companies.some((c) => c.id === savedCompany)) priceState.companyId = savedCompany;
+                const savedWindow = Number(loadPricePref('priceWindow', priceState.windowHours));
+                if (PRICE_WINDOW_HOURS.includes(savedWindow)) priceState.windowHours = savedWindow;
 
                 const select = document.getElementById('price-company');
                 GRID_FEES.companies.forEach((c) => {
@@ -1191,6 +1299,14 @@
                         renderPriceCard();
                     });
                 });
+                document.querySelectorAll('input[name="price-window"]').forEach((radio) => {
+                    radio.checked = Number(radio.value) === priceState.windowHours;
+                    radio.addEventListener('change', () => {
+                        priceState.windowHours = Number(radio.value);
+                        savePricePref('priceWindow', radio.value);
+                        renderPriceCard();
+                    });
+                });
                 select.addEventListener('change', () => {
                     priceState.companyId = select.value;
                     savePricePref('priceCompany', select.value);
@@ -1201,9 +1317,10 @@
                 document.getElementById('price-body').hidden = false;
                 renderPriceCard();
 
-                // Move the "now" marker when the 15-minute slot changes
+                // Move the "now" marker (and the "Paras aika" window, which only
+                // looks ahead) when the 15-minute slot changes
                 setInterval(() => {
-                    if (findPriceIndex(Date.now()) !== priceState.nowIndex) drawPrices();
+                    if (findPriceIndex(Date.now()) !== priceState.nowIndex) renderPriceCard();
                 }, 30000);
             })
             .catch((err) => {
