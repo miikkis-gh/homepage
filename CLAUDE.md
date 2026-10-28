@@ -175,14 +175,15 @@ Tomorrow's prices appear once published (usually early afternoon), so the chart 
 ## Icons
 Service logos (Spotify/Suno/Instagram links, plus the YouTube heading logo in `index.html`) are sourced from
 the Simple Icons project (`cdn.jsdelivr.net/npm/simple-icons/icons/<name>.svg`) for
-accurate paths — don't hand-draw new ones if adding more services. Per Etch they're drawn in
+accurate paths — don't hand-draw new ones if adding more services. The W Social link's "W" is hand-drawn (Simple Icons has
+no W Social logo) after the shape of wsocial.eu's own icon. Per Etch they're drawn in
 `currentColor`, not their brand colours — except the YouTube heading logo, which is red (see Etch above).
 
 ## Disabled hero links
 Suno and Notes are **currently disabled** (2026-10-25): their `<a class="cell cell--link">` carry
-`hidden`. While any link is hidden, the remaining ones span 4 of the hero's 12 columns on desktop
-(a `:has()` rule in `styles.css`, scoped to `min-width: 841px`) so two links fill the row; the
-narrower breakpoints already fit two per row. Remove `hidden` to restore them.
+`hidden`. Remove `hidden` to restore them — no CSS change needed: `.hero-links` is a rails sub-grid
+that splits the 8 columns beside the art equally among however many links are visible (desktop), or
+sets them two per row with an odd last one spanning the full row (narrower breakpoints).
 
 ## Notes link
 The last link cell ("Notes") points to the Finnish-language notes site at `https://i.miikkis.fi` —

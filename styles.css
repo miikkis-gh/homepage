@@ -336,12 +336,15 @@ a.cell:focus-visible .cell-go {
   padding: 0;
 }
 
+/* Links share the 8 columns beside the art equally, however many are shown */
 .hero-links {
-  display: contents;
+  grid-column: span 8;
+  grid-template-columns: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
 }
 
 .die--hero .cell--link {
-  grid-column: span 2;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -350,15 +353,9 @@ a.cell:focus-visible .cell-go {
   padding-right: calc(var(--etch-space-4) + var(--etch-icon));
 }
 
-/* Disabled links (`hidden`): the rest widen to fill the row (8 cols beside the art) */
+/* Disabled links (`hidden`): the rest widen to fill the row */
 .die--hero .cell--link[hidden] {
   display: none;
-}
-
-@media (min-width: 841px) {
-  .hero-links:has(> .cell--link[hidden]) > .cell--link {
-    grid-column: span 4;
-  }
 }
 
 .link-icon {
@@ -1209,9 +1206,19 @@ html.lightbox-open {
     grid-column: span 3;
   }
 
+  .hero-links {
+    grid-column: span 6;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-flow: row;
+  }
+
   .die--hero .cell--link {
-    grid-column: span 3;
     min-height: 104px;
+  }
+
+  /* Odd number of links: the last one takes the whole row */
+  .hero-links > .cell--link:nth-child(odd of :not([hidden])):nth-last-child(1 of :not([hidden])) {
+    grid-column: span 2;
   }
 
   .hero-art {
@@ -1239,7 +1246,7 @@ html.lightbox-open {
   }
 }
 
-/* Phones: 2-column hero, clock and location full width, links 2 × 2 */
+/* Phones: 2-column hero, clock and location full width, links two per row */
 @media (max-width: 480px) {
   .page {
     padding: var(--etch-space-6) var(--etch-space-4);
@@ -1265,8 +1272,11 @@ html.lightbox-open {
     grid-column: span 2;
   }
 
+  .hero-links {
+    grid-column: span 2;
+  }
+
   .die--hero .cell--link {
-    grid-column: span 1;
     min-height: 96px;
     padding-right: calc(var(--etch-space-4) + var(--etch-icon));
   }
