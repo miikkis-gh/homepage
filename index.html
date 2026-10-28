@@ -47,7 +47,8 @@
                 </div>
             </div>
 
-            <div class="cell hero-location" id="location-cell">
+            <!-- Location disabled: remove `hidden` to bring it back (CSS and script follow it) -->
+            <div class="cell hero-location" id="location-cell" hidden>
                 <span class="engraving" data-motif="lanes" aria-hidden="true"></span>
                 <div class="cell-body" id="location" hidden>
                     <p class="micro cell-label">
@@ -479,7 +480,7 @@
             'https://docs.google.com/spreadsheets/d/e/2PACX-1vT1IWRGe0nevqnYGTyzMQYwSPA-8ynwUjSrGRZfMlGs6DGyC1ywITvZpSQG8dUSOVljbXUDBS2mZfNN/pub?gid=1935106307&single=true&output=csv';
         const LOCATION_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
-        fetch(LOCATION_CSV_URL)
+        if (!document.getElementById('location-cell').hidden) fetch(LOCATION_CSV_URL)
             .then((res) => {
                 if (!res.ok) throw new Error(`Location fetch failed: ${res.status}`);
                 return res.text();

@@ -88,6 +88,10 @@ images closest to 1:1 or 4:3 crop least. The Google Photos direct-link trick
 is unofficial/undocumented — if a card image ever breaks, just re-copy the link.
 
 ## Live clock & location
+**Location currently disabled** (2026-10-28): the `.hero-location` cell carries `hidden`, which hides
+it, widens the clock to fill its place (via `:has()` in `styles.css`) and skips the CSV fetch. Remove
+`hidden` to bring it back — nothing else needs changing.
+
 The hero die (`.die--hero`, under the "MIIKKIS.FI" masthead) shows two live readouts beside the links:
 - **Clock** (`#clock-time` + `#clock-date`): ticks every second via `Intl.DateTimeFormat` with
   `timeZone: 'Europe/Helsinki'` — always Helsinki time regardless of visitor's

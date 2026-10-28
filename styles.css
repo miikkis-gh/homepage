@@ -330,6 +330,15 @@ a.cell:focus-visible .cell-go {
   grid-column: span 4;
 }
 
+/* Location disabled (`hidden` on .hero-location): the clock takes its place too */
+.hero-location[hidden] {
+  display: none;
+}
+
+.die--hero:has(> .hero-location[hidden]) > .hero-clock {
+  grid-column: span 8;
+}
+
 .hero-art {
   grid-column: span 4;
   grid-row: span 2;
@@ -1204,6 +1213,10 @@ html.lightbox-open {
   .hero-clock,
   .hero-location {
     grid-column: span 3;
+  }
+
+  .die--hero:has(> .hero-location[hidden]) > .hero-clock {
+    grid-column: 1 / -1;
   }
 
   .hero-links {
